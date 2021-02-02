@@ -1,0 +1,16 @@
+{
+  "name": "brigade-sdk-browser-example",
+  "author": "Brigade Core Maintainers",
+  "license": "Apache-2.0",
+  "scripts": {
+    "demo": "cd ../.. && yarn build && cd examples/browser && yarn install && tsc && webpack && cp src/index.html dist/index.html && open dist/index.html"
+  },
+  "devDependencies": {
+    "typescript": "^4.1.2",
+    "webpack": "^5.11.1",
+    "webpack-cli": "^4.3.1"
+  },
+  "dependencies": {
+    "unique-names-generator": "^4.3.1"
+  }
+}
