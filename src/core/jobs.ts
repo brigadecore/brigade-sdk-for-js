@@ -85,7 +85,7 @@ export interface JobSpec {
    * of tests until a database is launched and READY in a sidecar container),
    * then logic within those containers must account for these constraints.
    */
-  sidecarContainers?: any // eslint-disable-line @typescript-eslint/no-explicit-any
+  sidecarContainers?: { [key: string]: JobContainerSpec }
   /**
    * Specifies the time, in seconds, that must elapse before a running Job
    * should be considered to have timed out
@@ -156,7 +156,7 @@ export interface JobHost {
    * This provides an opaque mechanism for communicating Job needs such as
    * specific hardware like an SSD or GPU.
    */
-	nodeSelector?: any // eslint-disable-line @typescript-eslint/no-explicit-any
+	nodeSelector?: { [key: string]: string }
 }
 
 /**

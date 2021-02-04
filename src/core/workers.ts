@@ -1,7 +1,7 @@
 import * as rm from "../rest_machinery"
 
 import { ContainerSpec } from "./containers" 
-import { JobsClient } from "./jobs"
+import { Job, JobsClient } from "./jobs"
 
 /**
  * Represents the desired granularity of Worker log output.
@@ -136,7 +136,7 @@ export interface Worker {
    * Contains details of all Jobs spawned by the Worker during handling of
    * the Event
    */
-  jobs?: any // eslint-disable-line @typescript-eslint/no-explicit-any
+  jobs?: { [key: string]: Job }
 }
 
 /**
@@ -189,7 +189,7 @@ export interface WorkerSpec {
    * would like to embed configuration (e.g. brigade.json) or scripts (e.g.
    * brigade.js) directly within the WorkerSpec.
    */
-  defaultConfigFiles?: any // eslint-disable-line @typescript-eslint/no-explicit-any
+  defaultConfigFiles?: { [key: string]: string }
 }
 
 /**

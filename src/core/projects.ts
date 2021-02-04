@@ -96,7 +96,7 @@ export interface EventSubscription {
    * forgotten to apply applicable labels accidentally subscribes to ALL events
    * from the GitHub gateway, regardless of the repository of origin.
    */
-  labels: any // eslint-disable-line @typescript-eslint/no-explicit-any
+  labels: { [key: string]: string }
 }
 
 /**

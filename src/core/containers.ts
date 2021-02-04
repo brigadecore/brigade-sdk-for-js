@@ -44,5 +44,5 @@ export interface ContainerSpec {
    * A map of key/value pairs that specify environment variables to be set
    * within the OCI container
    */
-  environment?: any // eslint-disable-line @typescript-eslint/no-explicit-any
+  environment?: { [key: string]: string }
 }

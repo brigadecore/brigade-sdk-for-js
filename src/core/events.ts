@@ -47,7 +47,7 @@ export interface Event {
    * subscription from all push events emitted by the GitHub gateway to just
    * those having originated from a specific repository.
    */
-  labels?: any // eslint-disable-line @typescript-eslint/no-explicit-any
+  labels?: { [key: string]: string }
   /**
    * An optional, succinct title for the Event, ideal for use in lists or in
    * scenarios where UI real estate is constrained.
