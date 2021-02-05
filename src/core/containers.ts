@@ -29,7 +29,7 @@ export interface ContainerSpec {
    * specifies whether a container host already having the specified OCI image
    * should attempt to re-pull that image prior to launching a new container
    */
-  imagePullPolicy?: string
+  imagePullPolicy?: ImagePullPolicy
   /**
    * Specifies the command to be executed by the OCI container. This can be used
    * to optionally override the default command specified by the OCI image
