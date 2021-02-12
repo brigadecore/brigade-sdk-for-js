@@ -136,7 +136,7 @@ export interface Worker {
    * Contains details of all Jobs spawned by the Worker during handling of
    * the Event
    */
-  jobs?: { [key: string]: Job }
+  jobs?: Job[]
 }
 
 /**

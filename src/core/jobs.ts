@@ -57,6 +57,10 @@ export enum JobPhase {
  */
 export interface Job {
   /**
+   * The Job's name. Must be unique per Worker.
+   */
+  name: string
+  /**
    * The technical blueprint for the Job
    */
   spec: JobSpec
@@ -222,8 +226,8 @@ export class JobsClient {
    * @throws An error if the specified Event already has a Job with the
    * specified name
    */
-  public async create(eventID: string, jobName: string, job: Job): Promise<void> {
-    const req = new rm.Request("PUT", `v2/events/${eventID}/worker/jobs/${jobName}`)
+  public async create(eventID: string, job: Job): Promise<void> {
+    const req = new rm.Request("POST", `v2/events/${eventID}/worker/jobs`)
     req.bodyObjKind = "Job"
     req.bodyObj = job
     req.successCode = 201

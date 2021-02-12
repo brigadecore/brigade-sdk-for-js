@@ -15,6 +15,7 @@ describe("jobs", () => {
         const testEventID = "12345"
         const testJobName = "Italian"
         const testJob: Job = {
+          name: testJobName,
           spec: {
             primaryContainer: {
               image: "debian:latest"
@@ -22,12 +23,12 @@ describe("jobs", () => {
           }
         }
         await common.testClient({
-          expectedRequestMethod: "PUT",
-          expectedRequestPath: `/v2/events/${testEventID}/worker/jobs/${testJobName}`,
+          expectedRequestMethod: "POST",
+          expectedRequestPath: `/v2/events/${testEventID}/worker/jobs`,
           expectedRequestBody: testJob,
           mockResponseCode: 201,
           clientInvocationLogic: () => {
-            return client.create(testEventID, testJobName, testJob)
+            return client.create(testEventID, testJob)
           }
         })
       })
