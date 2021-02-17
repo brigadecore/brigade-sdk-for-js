@@ -1,5 +1,5 @@
 {
-  "name": "@krancour/brigade-sdk-node-example",
+  "name": "@brigadecore/brigade-sdk-node-example",
   "author": "Brigade Core Maintainers",
   "license": "Apache-2.0",
   "type": "module",

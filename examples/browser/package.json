@@ -1,5 +1,5 @@
 {
-  "name": "brigade-sdk-browser-example",
+  "name": "@brigadecore/brigade-sdk-browser-example",
   "author": "Brigade Core Maintainers",
   "license": "Apache-2.0",
   "scripts": {
