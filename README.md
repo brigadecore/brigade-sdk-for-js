@@ -17,13 +17,13 @@ Install into your project using your favorite package manager.
 For instance:
 
 ```console
-$ npm install --save @krancour/brigade-sdk
+$ npm install --save @brigadecore/brigade-sdk
 ```
 
 Or:
 
 ```console
-$ yarn add @krancour/brigade-sdk
+$ yarn add @brigadecore/brigade-sdk
 ```
 
 ## Basic Use
@@ -33,7 +33,7 @@ __Note: All examples that follow use TypeScript.__
 A Brigade API client can be obtained as follows:
 
 ```typescript
-import { APIClient } from "@krancour/brigade-sdk"
+import { APIClient } from "@brigadecore/brigade-sdk"
 
 // ...
 
@@ -83,7 +83,7 @@ something that might be practical for a program such as a Brigade gateway, whose
 only interaction with Brigade involves the creation of new Events:
 
 ```typescript
-import { core } from "@krancour/brigade-sdk"
+import { core } from "@brigadecore/brigade-sdk"
 
 // ...
 

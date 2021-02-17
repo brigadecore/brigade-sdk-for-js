@@ -1,5 +1,5 @@
 {
-  "name": "@krancour/brigade-sdk",
+  "name": "@brigadecore/brigade-sdk",
   "version": "placeholder",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
