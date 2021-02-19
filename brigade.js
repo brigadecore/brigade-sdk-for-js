@@ -50,7 +50,7 @@ const publishJob = (e, p) => {
     let matchTokens = Array.from(matchStr);
     version = matchTokens[1];
   }
-  const job = new Job("lint", img);
+  const job = new Job("publish", img);
   job.mountPath = localPath;
   job.env = {
     "NPM_TOKEN": p.secrets.npmToken
