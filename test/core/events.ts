@@ -87,12 +87,28 @@ describe("events", () => {
           expectedRequestPath: "/v2/events",
           expectedRequestParams: new Map<string, string>([
             ["projectID", testProjectID],
+            ["source", "github"],
+            ["type", "push"],
+            ["qualifiers", "foo=bar"],
+            ["labels", "bat=baz"],
+            ["sourceState", "do-rei-me=fa-sol-la-te-doh"],
             ["workerPhases", testWorkerPhase]
           ]),
           mockResponseBody: testEvents,
           clientInvocationLogic: () => {
             return client.list({
               projectID: testProjectID,
+              source: "github",
+              type: "push",
+              qualifiers: {
+                foo: "bar"
+              },
+              labels: {
+                bat: "baz"
+              },
+              sourceState: {
+                "do-rei-me": "fa-sol-la-te-doh"
+              },
               workerPhases: [ testWorkerPhase ] ,
             })
           }
@@ -145,13 +161,29 @@ describe("events", () => {
           expectedRequestPath: "/v2/events/cancellations",
           expectedRequestParams: new Map<string, string>([
             ["projectID", testProjectID],
+            ["source", "github"],
+            ["type", "push"],
+            ["qualifiers", "foo=bar"],
+            ["labels", "bat=baz"],
+            ["sourceState", "do-rei-me=fa-sol-la-te-doh"],
             ["workerPhases", testWorkerPhase]
           ]),
           mockResponseBody: testResult,
           clientInvocationLogic: () => {
             return client.cancelMany({
               projectID: testProjectID,
-              workerPhases: [ testWorkerPhase ]
+              source: "github",
+              type: "push",
+              qualifiers: {
+                foo: "bar"
+              },
+              labels: {
+                bat: "baz"
+              },
+              sourceState: {
+                "do-rei-me": "fa-sol-la-te-doh"
+              },
+              workerPhases: [ testWorkerPhase ] ,
             })
           }
         })
@@ -183,13 +215,29 @@ describe("events", () => {
           expectedRequestPath: "/v2/events",
           expectedRequestParams: new Map<string, string>([
             ["projectID", testProjectID],
+            ["source", "github"],
+            ["type", "push"],
+            ["qualifiers", "foo=bar"],
+            ["labels", "bat=baz"],
+            ["sourceState", "do-rei-me=fa-sol-la-te-doh"],
             ["workerPhases", testWorkerPhase]
           ]),
           mockResponseBody: testResult,
           clientInvocationLogic: () => {
             return client.deleteMany({
               projectID: testProjectID,
-              workerPhases: [ testWorkerPhase ]
+              source: "github",
+              type: "push",
+              qualifiers: {
+                foo: "bar"
+              },
+              labels: {
+                bat: "baz"
+              },
+              sourceState: {
+                "do-rei-me": "fa-sol-la-te-doh"
+              },
+              workerPhases: [ testWorkerPhase ] ,
             })
           }
         })

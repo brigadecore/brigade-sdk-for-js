@@ -33,19 +33,47 @@ export interface Event {
    */
   source: string
   /**
+   * Encapsulates opaque, source-specific (e.g. gateway-specific) state.
+   */
+  sourceState?: SourceState
+  /**
    * Specifies the exact event that has occurred in the upstream system. Values
    * are opaque and source-specific.
    */
   type: string
   /**
-   * Conveys additional event details for the purposes of matching Events
-   * to subscribed Projects. For instance, no subscribers to the "GitHub" Source
-   * and the "push" Type are likely to want to hear about push events for ALL
-   * repositories. If the "GitHub" gateway labels events with the name of the
-   * repository from which the event originated (e.g. "repo=github.com/foo/bar")
-   * then subscribers can utilize those same criteria to narrow their
-   * subscription from all push events emitted by the GitHub gateway to just
-   * those having originated from a specific repository.
+   * Provides critical disambiguation of an Event's type. A Project is
+   * considered subscribed to an Event IF AND ONLY IF (in addition to matching
+   * the Event's Source and Type) it matches ALL of the Event's qualifiers
+   * EXACTLY. To demonstrate the usefulness of this, consider any event from a
+   * hypothetical GitHub gateway. If, by design, that gateway does not intend
+   * for any Project to subscribe to ALL Events (i.e. regardless of which
+   * repository they originated from), then that gateway can QUALIFY Events it
+   * emits into Brigade's event bus with repo=<repository name>. Projects
+   * wishing to subscribe to Events from the GitHub gateway MUST include that
+   * Qualifier in their EventSubscription. Note that the Qualifiers field's
+   * "MUST match" subscription semantics differ from the Labels field's "MAY
+   * match" subscription semantics.
+   */
+  qualifiers?: { [key: string]: string }
+  /**
+   * Conveys supplementary Event details that Projects may OPTIONALLY use
+   * to narrow EventSubscription criteria. A Project is considered subscribed to
+   * an Event if (in addition to matching the Event's Source, Type, and
+   * Qualifiers) the Event has ALL labels expressed in the Project's
+   * EventSubscription. If the Event has ADDITIONAL labels, not mentioned by the
+   * EventSubscription, these do not preclude a match. To demonstrate the
+   * usefulness of this, consider any event from a hypothetical Slack gateway.
+   * If, by design, that gateway intends for Projects to select between
+   * subscribing to ALL Events or ONLY events originating from a specific
+   * channel, then that gateway can LABEL Events it emits into Brigade's event
+   * bus with channel=<channel name>. Projects wishing to subscribe to ALL
+   * Events from the Slack gateway MAY omit that Label from their
+   * EventSubscription, while Projects wishing to subscribe to only Events
+   * originating from a specific channel MAY include that Label in their
+   * EventSubscription. Note that the Labels field's "MAY match" subscription
+   * semantics differ from the Qualifiers field's "MUST match" subscription
+   * semantics.
    */
   labels?: { [key: string]: string }
   /**
@@ -81,6 +109,17 @@ export interface Event {
 }
 
 /**
+ * Encapsulates opaque, source-specific (e.g. gateway-specific) state.
+ */
+export interface SourceState {
+  /**
+   * A map of arbitrary and opaque key/value pairs that the source of an Event
+   * (e.g. the gateway that created it) can use to store source-specific state.
+   */
+  state?: { [key: string]: string }
+}
+
+/**
  * Useful filter criteria when selecting multiple Events for API group
  * operations like list, cancel, or delete.
  */
@@ -90,10 +129,33 @@ export interface EventsSelector {
    */
   projectID?: string
   /**
+   * Specifies that only Events from the indicated source should be selected.
+   */
+  source?: string
+ /**
+   * Specifies that only Events having all of the indicated source state
+   * key/value pairs should be selected.
+   */
+  sourceState?: { [key: string]: string }
+  /**
+   * Specifies that only Events having the indicated type should be selected.
+   */
+  type?: string
+  /**
    * Specifies that Events with their Workers in any of the indicated phases
    * should be selected
    */
   workerPhases?: WorkerPhase[]
+  /**
+   * Specifies that only Events qualified with these key/value pairs should be
+   * selected.
+   */
+  qualifiers?: { [key: string]: string }
+  /**
+   * Specifies that only Events labeled with these key/value pairs should be
+   * selected.
+   */
+  labels?: { [key: string]: string }
 }
 
 /**
@@ -188,15 +250,7 @@ export class EventsClient {
   public async list(selector?: EventsSelector, opts?: meta.ListOptions): Promise<meta.List<Event>> { // eslint-disable-line @typescript-eslint/no-unused-vars
     const req = new rm.Request("GET", "v2/events")
     req.listOpts = opts
-    req.queryParams = new Map<string, string>()
-    if (selector) {
-      if (selector.projectID) {
-        req.queryParams.set("projectID", selector.projectID)
-      }
-      if (selector.workerPhases) {
-        req.queryParams.set("workerPhases", selector.workerPhases.join(","))
-      }
-    }
+    req.queryParams = eventsSelectorToQueryParams(selector || {})
     return this.rmClient.executeRequest(req) as Promise<meta.List<Event>> 
   }
 
@@ -231,13 +285,7 @@ export class EventsClient {
    */
   public async cancelMany(selector: EventsSelector): Promise<CancelManyEventsResult> {
     const req = new rm.Request("POST", "v2/events/cancellations")
-    req.queryParams = new Map<string, string>()
-    if (selector.projectID) {
-      req.queryParams.set("projectID", selector.projectID)
-    }
-    if (selector.workerPhases) {
-      req.queryParams.set("workerPhases", selector.workerPhases.join(","))
-    }
+    req.queryParams = eventsSelectorToQueryParams(selector)
     return this.rmClient.executeRequest(req) as Promise<CancelManyEventsResult>
   }
 
@@ -260,13 +308,7 @@ export class EventsClient {
    */
   public async deleteMany(selector: EventsSelector): Promise<DeleteManyEventsResult> {
     const req = new rm.Request("DELETE", "v2/events")
-    req.queryParams = new Map<string, string>()
-    if (selector.projectID) {
-      req.queryParams.set("projectID", selector.projectID)
-    }
-    if (selector.workerPhases) {
-      req.queryParams.set("workerPhases", selector.workerPhases.join(","))
-    }
+    req.queryParams = eventsSelectorToQueryParams(selector)
     return this.rmClient.executeRequest(req) as Promise<DeleteManyEventsResult>
   }
 
@@ -287,4 +329,42 @@ export class EventsClient {
   public logs(): LogsClient {
     return this.logsClient
   }  
+}
+
+function eventsSelectorToQueryParams(selector: EventsSelector): Map<string, string> {
+  const queryParams = new Map<string, string>()
+  if (selector.projectID) {
+    queryParams.set("projectID", selector.projectID)
+  }
+  if (selector.source) {
+    queryParams.set("source", selector.source)
+  }
+  if (selector.qualifiers) {
+    const qualifiersStrs: string[] = []
+    for (const key in selector.qualifiers) {
+      qualifiersStrs.push(`${key}=${selector.qualifiers[key]}`)
+    }
+    queryParams.set("qualifiers", qualifiersStrs.join(","))
+  }
+  if (selector.labels) {
+    const labelsStrs: string[] = []
+    for (const key in selector.labels) {
+      labelsStrs.push(`${key}=${selector.labels[key]}`)
+    }
+    queryParams.set("labels", labelsStrs.join(","))
+  }
+  if (selector.sourceState) {
+    const sourceStateStrs: string[] = []
+    for (const key in selector.sourceState) {
+      sourceStateStrs.push(`${key}=${selector.sourceState[key]}`)
+    }
+    queryParams.set("sourceState", sourceStateStrs.join(","))
+  }
+  if (selector.type) {
+    queryParams.set("type", selector.type)
+  }
+  if (selector.workerPhases) {
+    queryParams.set("workerPhases", selector.workerPhases.join(","))
+  }
+  return queryParams
 }
