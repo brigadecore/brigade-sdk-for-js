@@ -46,24 +46,18 @@ token = await client.authn().serviceAccounts().create(
 console.log(`Granting system role READER to service account ${serviceAccountID}...`)
 await client.authz().roleAssignments().grant({
   principal: {
-    type: brigade.authz.PrincipalType.ServiceAccount,
+    type: brigade.authz.PrincipalTypeServiceAccount,
     id: serviceAccountID
   },
-  role: {
-    type: brigade.system.RoleTypeSystem,
-    name: "READER"
-  }
+  role: "READER"
 })
 console.log(`Granting system role PROJECT_CREATOR to service account ${serviceAccountID}...`)
 await client.authz().roleAssignments().grant({
   principal: {
-    type: brigade.authz.PrincipalType.ServiceAccount,
+    type: brigade.authz.PrincipalTypeServiceAccount,
     id: serviceAccountID
   },
-  role: {
-    type: brigade.system.RoleTypeSystem,
-    name: "PROJECT_CREATOR"
-  }
+  role: "PROJECT_CREATOR"
 })
 
 // Refresh the client using the service account token

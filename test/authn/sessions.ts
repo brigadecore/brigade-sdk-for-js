@@ -1,4 +1,4 @@
-import { OIDCAuthDetails, SessionsClient } from "../../src/authn/sessions"
+import { ThirdPartyAuthDetails, SessionsClient } from "../../src/authn/sessions"
 import { Token } from "../../src/authn/tokens"
 
 import * as common from "../common"
@@ -35,7 +35,7 @@ describe("sessions", () => {
 
     describe("#createUserSession", () => {
       it("should send/receive properly over HTTP", async () => {
-        const testOIDCAuthDetails: OIDCAuthDetails = {
+        const testThirdPartyAuthDetails: ThirdPartyAuthDetails = {
           authURL: "https://openid.example.com/blah/blah/blah",
           token: "opensesame"
         }
@@ -43,10 +43,15 @@ describe("sessions", () => {
           expectedRequestMethod: "POST",
           expectedRequestPath: "/v2/sessions",
           expectTokenAuthHeader: false,
+          expectedRequestParams: new Map<string, string>([
+            ["successURL", "https://www.youtube.com/watch?v=JOCtdw9FG-s"]
+          ]),
           mockResponseCode: 201,
-          mockResponseBody: testOIDCAuthDetails,
+          mockResponseBody: testThirdPartyAuthDetails,
           clientInvocationLogic: () => {
-            return client.createUserSession()
+            return client.createUserSession({
+              successURL: "https://www.youtube.com/watch?v=JOCtdw9FG-s"
+            })
           }
         })
       })

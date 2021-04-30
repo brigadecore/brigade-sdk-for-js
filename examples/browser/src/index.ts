@@ -41,24 +41,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.writeln(`Granting system role READER to service account ${serviceAccountID}...<br/>`)
     await client.authz().roleAssignments().grant({
       principal: {
-        type: brigade.authz.PrincipalType.ServiceAccount,
+        type: brigade.authz.PrincipalTypeServiceAccount,
         id: serviceAccountID
       },
-      role: {
-        type: brigade.system.RoleTypeSystem,
-        name: "READER"
-      }
+      role: "READER"
     })
     document.writeln(`Granting system role PROJECT_CREATOR to service account ${serviceAccountID}...<br/>`)
     await client.authz().roleAssignments().grant({
       principal: {
-        type: brigade.authz.PrincipalType.ServiceAccount,
+        type: brigade.authz.PrincipalTypeServiceAccount,
         id: serviceAccountID
       },
-      role: {
-        type: brigade.system.RoleTypeSystem,
-        name: "PROJECT_CREATOR"
-      }
+      role: "PROJECT_CREATOR"
     })
 
     // Refresh the client using the service account token

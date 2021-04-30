@@ -245,6 +245,7 @@ export class EventsClient {
    * 
    * @param [selector] Optional selection criteria
    * @param [opts] Options used to retrieve a specific page from a paginated
+   * list
    * @returns A list of Events
    */
   public async list(selector?: EventsSelector, opts?: meta.ListOptions): Promise<meta.List<Event>> { // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -263,6 +264,20 @@ export class EventsClient {
    */
   public async get(id: string): Promise<Event> {
     const req = new rm.Request("GET", `v2/events/${id}`)
+    return this.rmClient.executeRequest(req) as Promise<Event>
+  }
+
+  /**
+   * Clones a pre-existing Event, removing the original's metadata and Worker
+   * config in the process.  A new Event is created using the rest of the
+   * details preserved from the original.
+   * 
+   * @param id Identifier of the Event to clone
+   * @returns A new Event that is a clone of the original
+   */
+  public async clone(id: string): Promise<Event> {
+    const req = new rm.Request("POST", `v2/events/${id}/clones`)
+    req.successCode = 201
     return this.rmClient.executeRequest(req) as Promise<Event>
   }
 

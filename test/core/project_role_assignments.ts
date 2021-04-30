@@ -1,6 +1,6 @@
-import { RoleTypeProject } from "../../src/core/roles"
-import { PrincipalType, RoleAssignment } from "../../src/authz/role_assignments"
-import { ProjectRoleAssignmentsClient } from "../../src/core/project_role_assignments"
+import { PrincipalTypeUser } from "../../src/authz/role_assignments"
+import { ProjectRoleAssignment, ProjectRoleAssignmentsClient } from "../../src/core/project_role_assignments"
+import * as meta from "../../src/meta"
 
 import * as common from "../common"
 
@@ -18,23 +18,59 @@ describe("project_roles", () => {
     describe("#grant", () => {
       it("should send/receive properly over HTTP", async () => { 
         const testProjectID = "avengers-initiative"
-        const testRoleAssignment: RoleAssignment = {
-          role: {
-            type: RoleTypeProject,
-            name: "ceo",
-            scope: testProjectID
-          },
+        const testProjectRoleAssignment: ProjectRoleAssignment = {
+          role: "ceo",
           principal: {
-            type: PrincipalType.User,
+            type: PrincipalTypeUser,
             id: "tony@starkindustries.com"
           }
         }
         await common.testClient({
           expectedRequestMethod: "POST",
-          expectedRequestPath: "/v2/project-role-assignments",
-          expectedRequestBody: testRoleAssignment,
+          expectedRequestPath: `/v2/projects/${testProjectID}/role-assignments`,
+          expectedRequestBody: testProjectRoleAssignment,
           clientInvocationLogic: () => {
-            return client.grant(testRoleAssignment)
+            return client.grant(testProjectID, testProjectRoleAssignment)
+          }
+        })
+      })
+    })
+
+    describe("#list", () => {
+      it("should send/receive properly over HTTP", async () => { 
+        const testProjectID = "bluebook"
+        const testProjectRoleAssignments: meta.List<ProjectRoleAssignment> = {
+          metadata: {},
+          items: [
+            {
+              principal: {
+                type: PrincipalTypeUser,
+                id: "tony@starkindustries.com"
+              },
+              role: "ceo"
+            }
+          ]
+        }
+        await common.testClient({
+          expectedRequestMethod: "GET",
+          expectedRequestPath: `/v2/projects/${testProjectID}/role-assignments`,
+          expectedRequestParams: new Map<string, string>([
+            ["principalType", String(PrincipalTypeUser)],
+            ["principalID", "tony@starkindustries.com"],
+            ["role", "ceo"],
+          ]),
+          mockResponseBody: testProjectRoleAssignments,
+          clientInvocationLogic: () => {
+            return client.list(
+              testProjectID,
+              {
+                principal: {
+                  type: PrincipalTypeUser,
+                  id: "tony@starkindustries.com",
+                },
+                role: "ceo"
+              }
+            )
           }
         })
       })
@@ -43,29 +79,23 @@ describe("project_roles", () => {
     describe("#revoke", () => {
       it("should send/receive properly over HTTP", async () => { 
         const testProjectID = "avengers-initiative"
-        const testRoleAssignment: RoleAssignment = {
-          role: {
-            type: RoleTypeProject,
-            name: "ceo",
-            scope: testProjectID
-          },
+        const testProjectRoleAssignment: ProjectRoleAssignment = {
+          role: "ceo",
           principal: {
-            type: PrincipalType.User,
+            type: PrincipalTypeUser,
             id: "tony@starkindustries.com"
           }
         }
         await common.testClient({
           expectedRequestMethod: "DELETE",
-          expectedRequestPath: "/v2/project-role-assignments",
+          expectedRequestPath: `/v2/projects/${testProjectID}/role-assignments`,
           expectedRequestParams: new Map<string, string>([
-            ["roleType", String(testRoleAssignment.role.type)],
-            ["roleName", String(testRoleAssignment.role.name)],
-            ["roleScope", testRoleAssignment.role.scope || ""],
-            ["principalType", String(testRoleAssignment.principal.type)],
-            ["principalID", testRoleAssignment.principal.id]
+            ["role", String(testProjectRoleAssignment.role)],
+            ["principalType", String(testProjectRoleAssignment.principal.type)],
+            ["principalID", testProjectRoleAssignment.principal.id]
           ]),
           clientInvocationLogic: () => {
-            return client.revoke(testRoleAssignment)
+            return client.revoke(testProjectID, testProjectRoleAssignment)
           }
         })
       })

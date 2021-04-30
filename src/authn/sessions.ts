@@ -5,23 +5,35 @@ import * as rm from "../rest_machinery"
 import { Token } from "./tokens"
 
 /**
- * Encapsulates all information required for a client authenticating by means of
- * OpenID Connect to complete the authentication process using a third-party
- * OIDC identity provider.
+ * Encapsulates user-specified options when creating a new Session that will
+ * authenticate using a third-party identity provider.
  */
-export interface OIDCAuthDetails {
+export interface ThirdPartyAuthOptions {
+  /**
+   * Indicates where users should be redirected to after successful completion
+   * of a third-party authentication workflow. If this is left unspecified,
+   * users will be redirected to a default success page.
+   */
+  successURL: string
+}
+
+/**
+ * Encapsulates all information required for a client authenticating by means of
+ * a third-party identity provider to complete the authentication workflow.
+ */
+export interface ThirdPartyAuthDetails {
   /**
    * A URL that can be requested in a user's web browser to complete
-   * authentication via a third-party OIDC identity provider
+   * authentication via a third-party identity provider.
    */
   authURL: string
   /**
    * An opaque bearer token issued by Brigade to correlate a User with a
-   * Session. It remains unactivated (useless) until the OIDC authentication
-   * workflow is successfully completed. Clients may expect that that the token
-   * expires (at an interval determined by a system administrator) and, for
-   * simplicity, is NOT refreshable. When the token has expired,
-   * re-authentication is required.
+   * Session. It remains unactivated (useless) until the authentication workflow
+   * is successfully completed. Clients may expect that that the token expires
+   * (at an interval determined by a system administrator) and, for simplicity,
+   * is NOT refreshable. When the token has expired, re-authentication is
+   * required.
    */
   token: string
 }
@@ -70,17 +82,22 @@ export class SessionsClient {
   }
   
   /**
-   * Creates a new User Session and initiates an OpenID Connect authentication
-   * workflow.
+   * Creates a new User Session and initiates an authentication workflow with a
+   * third-party identity provider.
    *
    * @returns Details needed to continue the authentication process with a
-   * third-party OIDC identity provider.
+   * third-party identity provider.
    */
-  public async createUserSession(): Promise<OIDCAuthDetails> {
+  public async createUserSession(opts?: ThirdPartyAuthOptions): Promise<ThirdPartyAuthDetails> {
     const req = new rm.Request("POST", "v2/sessions")
+    if (opts?.successURL) {
+      req.queryParams = new Map<string, string>([
+        ["successURL", opts.successURL]
+      ])
+    }
     req.includeTokenAuthHeader = false
     req.successCode = 201
-    return this.rmClient.executeRequest(req) as Promise<OIDCAuthDetails>
+    return this.rmClient.executeRequest(req) as Promise<ThirdPartyAuthDetails>
   }
   
   /**

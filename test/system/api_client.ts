@@ -26,6 +26,22 @@ describe("api_client", () => {
       })
     })
 
+    describe("#unversionedPing", () => {
+      it("should send/receive properly over HTTP", async () => { 
+        const testPingResponse = {
+          version: "v0.0.0"
+        }
+        await common.testClient({
+          expectedRequestMethod: "GET",
+          expectedRequestPath: "/ping",
+          mockResponseBody: testPingResponse,
+          clientInvocationLogic: () => {
+            return client.unversionedPing()
+          }
+        })
+      })
+    })
+
   })
 
 })

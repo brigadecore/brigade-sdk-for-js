@@ -1,5 +1,38 @@
-import { RoleAssignment } from "../authz"
+import * as meta from "../meta"
+import { PrincipalReference, Role } from "../lib/authz"
 import * as rm from "../rest_machinery"
+
+/**
+ * Represents the assignment of a ProjectRole to a principal such as a User or
+ * ServiceAccount.
+ */
+export interface ProjectRoleAssignment {
+	/**
+	 * Assigns a Role to the specified principal
+	 */
+	role: Role
+	/**
+	 * Specifies the principal to whom the Role is assigned
+	 */
+	principal: PrincipalReference
+}
+
+/**
+ * Represents useful filter criteria when selecting multiple
+ * ProjectRoleAssignments for API group operations like list.
+ */
+export interface ProjectRoleAssignmentsSelector {
+  /**
+   * Specifies that only ProjectRoleAssignments for the specified Principal
+   * should be selected.
+   */
+  principal?: PrincipalReference
+	/**
+   * Specifies that only ProjectRoleAssignments for the specified Role should be
+   * selected.
+   */
+  role?: Role
+}
 
 /**
  * A specialized client for managing project-level RoleAssignments with the
@@ -26,30 +59,56 @@ export class ProjectRoleAssignmentsClient {
   /**
    * Grants a project-level Role to a principal.
    *
-   * @param roleAssignment Specifies the Role to grant and who to grant it to
+   * @param projectID The Project ID
+   * @param projectRoleAssignment Specifies the project-level Role to grant and who to
+   * grant it to
    * @throws An error if the specified Project, Role, or principal does not
    * exist
    */
-  public grant(roleAssignment: RoleAssignment): Promise<void> {
-    const req = new rm.Request("POST", "v2/project-role-assignments")
-    req.bodyObjKind = "RoleAssignment"
-    req.bodyObj = roleAssignment
+  public grant(projectID: string, projectRoleAssignment: ProjectRoleAssignment): Promise<void> {
+    const req = new rm.Request("POST", `v2/projects/${projectID}/role-assignments`)
+    req.bodyObjKind = "ProjectRoleAssignment"
+    req.bodyObj = projectRoleAssignment
     return this.rmClient.executeRequest(req) as Promise<void>
+  }
+
+  /**
+   * Returns a list of ProjectRoleAssignments ordered by principal type,
+   * principalID, and role.
+   * 
+   * @param projectID The Project ID
+   * @param [selector] Optional selection criteria
+   * @param [opts] Options used to retrieve a specific page from a paginated
+   * @returns A list of ProjectRoleAssignments
+   */
+  public async list(projectID: string, selector?: ProjectRoleAssignmentsSelector, opts?: meta.ListOptions): Promise<meta.List<ProjectRoleAssignment>> {
+    const req = new rm.Request("GET", `v2/projects/${projectID}/role-assignments`)
+    req.listOpts = opts
+    req.queryParams = new Map<string, string>()
+    if (selector) {
+      if (selector.principal) {
+        req.queryParams.set("principalType", String(selector.principal.type))
+        req.queryParams.set("principalID", selector.principal.id)
+      }
+      if (selector.role) {
+        req.queryParams.set("role", String(selector.role))
+      }
+    }
+    return this.rmClient.executeRequest(req) as Promise<meta.List<ProjectRoleAssignment>> 
   }
 
   /**
    * Revokes a project-level Role from a principal.
    *
+   * @param projectID The Project ID
    * @param roleAssignment Specifies the Role to revoke and who to revoke it
    * from
    * @throws An error if the specified Project or principal does not exist
    */
-  public revoke(roleAssignment: RoleAssignment): Promise<void> {
-    const req = new rm.Request("DELETE", "v2/project-role-assignments")
+  public revoke(projectID: string, roleAssignment: ProjectRoleAssignment): Promise<void> {
+    const req = new rm.Request("DELETE", `v2/projects/${projectID}/role-assignments`)
     req.queryParams = new Map<string, string>()
-    req.queryParams.set("roleType", String(roleAssignment.role.type))
-    req.queryParams.set("roleName", String(roleAssignment.role.name))
-    req.queryParams.set("roleScope", String(roleAssignment.role.scope))
+    req.queryParams.set("role", String(roleAssignment.role))
     req.queryParams.set("principalType", String(roleAssignment.principal.type))
     req.queryParams.set("principalID", roleAssignment.principal.id)
     return this.rmClient.executeRequest(req) as Promise<void>

@@ -1,51 +1,34 @@
-
+import * as meta from "../meta"
+import { PrincipalReference, PrincipalType } from "../lib/authz/principals"
 import { Role } from "../lib/authz/roles"
+import { RoleAssignment } from "../lib/authz/role_assignments"
 import * as rm from "../rest_machinery"
 
 /**
- * A type whose values can be used to disambiguate one type of principal from
- * another. For instance, when assigning a Role to a principal via a
- * RoleAssignment, a PrincipalType field is used to indicate whether the value
- * of the PrincipalID field reflects a User ID or a ServiceAccount ID.
+ * Represents a principal that is a ServiceAccount.
  */
-export enum PrincipalType {
-  /**
-   * Represents a principal that is a ServiceAccount
-   */
-  ServiceAccount = "SERVICE_ACCOUNT",
-  /**
-   * Represents a principal that is a User
-   */
-  User = "USER"
-}
-
-// A reference to any sort of security principal (human user, service account,
-// etc.)
-export interface PrincipalReference {
-	/**
-	 * Type qualifies what kind of principal is referenced by the ID field-- for
-	 * instance, a User or a ServiceAccount
-	 */
-	type: PrincipalType
-	/**
-	 * ID references a principal. The Type qualifies what type of principal that
-	 * is-- for instance, a User or a ServiceAccount.
-	 */
-	id: string
-}
+export const PrincipalTypeServiceAccount: PrincipalType = "SERVICE_ACCOUNT"
 
 /**
- * Represents the assignment of a Role to a principal.
+ * Represents a principal that is a User.
  */
-export interface RoleAssignment {
+export const PrincipalTypeUser: PrincipalType = "USER"
+
+/**
+ * Represents useful filter criteria when selecting multiple RoleAssignments for
+ * API group operations like list.
+ */
+export interface RoleAssignmentsSelector {
+  /**
+   * Specifies that only RoleAssignments for the specified Principal should be
+   * selected.
+   */
+  principal?: PrincipalReference
 	/**
-	 * Assigns a Role to the specified principal
-	 */
-	role: Role
-	/**
-	 * Specifies the principal to whom the Role is assigned
-	 */
-	principal: PrincipalReference
+   * Specifies that only RoleAssignments for the specified Role should be
+   * selected.
+   */
+  role?: Role
 }
 
 /**
@@ -71,6 +54,31 @@ export class RoleAssignmentsClient {
   }
 
   /**
+   * Returns a list of RoleAssignments, ordered by principal type, principalID,
+   * role, and scope.
+   * 
+   * @param [selector] Optional selection criteria
+   * @param [opts] Options used to retrieve a specific page from a paginated
+   * list
+   * @returns A list of RoleAssignments
+   */
+  public async list(selector?: RoleAssignmentsSelector, opts?: meta.ListOptions): Promise<meta.List<RoleAssignment>> {
+    const req = new rm.Request("GET", "v2/role-assignments")
+    req.listOpts = opts
+    req.queryParams = new Map<string, string>()
+    if (selector) {
+      if (selector.principal) {
+        req.queryParams.set("principalType", String(selector.principal.type))
+        req.queryParams.set("principalID", selector.principal.id)
+      }
+      if (selector.role) {
+        req.queryParams.set("role", String(selector.role))
+      }
+    }
+    return this.rmClient.executeRequest(req) as Promise<meta.List<RoleAssignment>> 
+  }
+
+  /**
    * Grants a system-level Role to a principal.
    * 
    * @param roleAssignment Specifies the Role to grant and who to grant it to
@@ -93,12 +101,11 @@ export class RoleAssignmentsClient {
   public async revoke(roleAssignment: RoleAssignment): Promise<void> {
     const req = new rm.Request("DELETE", "v2/role-assignments")
     req.queryParams = new Map<string, string>()
-    req.queryParams.set("roleType", String(roleAssignment.role.type))
-    req.queryParams.set("roleName", String(roleAssignment.role.name))
+    req.queryParams.set("role", String(roleAssignment.role))
     req.queryParams.set("principalType", String(roleAssignment.principal.type))
     req.queryParams.set("principalID", roleAssignment.principal.id)
-    if (roleAssignment.role.scope) {
-      req.queryParams.set("roleScope", String(roleAssignment.role.scope))
+    if (roleAssignment.scope) {
+      req.queryParams.set("scope", String(roleAssignment.scope))
     }
     return this.rmClient.executeRequest(req) as Promise<void>
   }
