@@ -29,6 +29,12 @@ describe("api_client", () => {
       })
     })
 
+    describe("#system", () => {
+      it("should return a system client", () => {
+        assert.isDefined(client.system())
+      })
+    })
+
   })
 
 })

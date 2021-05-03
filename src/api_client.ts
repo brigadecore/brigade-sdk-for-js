@@ -2,6 +2,7 @@ import * as authn from "./authn"
 import * as authz from "./authz"
 import * as core from "./core"
 import * as rm from "./rest_machinery"
+import * as system from "./system"
 
 
 /**
@@ -11,6 +12,7 @@ export class APIClient {
   private authnClient: authn.APIClient
   private authzClient: authz.APIClient
   private coreClient: core.APIClient
+  private systemClient: system.APIClient
 
   /**
    * Creates an instance of APIClient.
@@ -27,13 +29,14 @@ export class APIClient {
     this.authnClient = new authn.APIClient(apiAddress, apiToken, opts)
     this.authzClient = new authz.APIClient(apiAddress, apiToken, opts)
     this.coreClient = new core.APIClient(apiAddress, apiToken, opts)
+    this.systemClient = new system.APIClient(apiAddress, apiToken, opts)
   }
 
   /**
    * Returns a specialized client for managing identity and authentication
    * concerns.
    * 
-   * @returns A specialized client for for managing identity, authentication,
+   * @returns A specialized client for managing identity, authentication,
    * and authorization concerns
    */
   public authn(): authn.APIClient {
@@ -44,7 +47,7 @@ export class APIClient {
    * Returns a specialized client for managing system-wide authorization
    * configuration.
    * 
-   * @returns A specialized client for for managing system-wide Brigade
+   * @returns A specialized client for managing system-wide Brigade
    * configuration
    */
   public authz(): authz.APIClient {
@@ -55,11 +58,20 @@ export class APIClient {
    * Returns a specialized client for managing core Brigade resources such as
    * Projects and Events.
    * 
-   * @returns A specialized client for for managing core Brigade resources such
+   * @returns A specialized client for managing core Brigade resources such
    * as Projects and Events
    */
   public core(): core.APIClient {
     return this.coreClient
+  }
+
+  /**
+   * Returns a specialized client for performing system-level operations.
+   * 
+   * @returns A specialized client for performing system-level operations.
+   */
+  public system(): system.APIClient {
+    return this.systemClient  
   }
 
 }

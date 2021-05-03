@@ -1,5 +1,6 @@
-import { RoleTypeSystem } from "../../src/system/roles"
-import { PrincipalType, RoleAssignment, RoleAssignmentsClient } from "../../src/authz/role_assignments"
+import { RoleAssignment } from "../../src/lib/authz"
+import { PrincipalTypeUser, RoleAssignmentsClient } from "../../src/authz/role_assignments"
+import * as meta from "../../src/meta"
 
 import * as common from "../common"
 
@@ -17,12 +18,9 @@ describe("roles", () => {
     describe("#grant", () => {
       it("should send/receive properly over HTTP", async () => { 
         const testRoleAssignment: RoleAssignment = {
-          role: {
-            type: RoleTypeSystem,
-            name: "ceo"
-          },
+          role: "ceo",
           principal: {
-            type: PrincipalType.User,
+            type: PrincipalTypeUser,
             id: "tony@starkindustries.com"
           }
         }
@@ -37,15 +35,48 @@ describe("roles", () => {
       })
     })
 
+    describe("#list", () => {
+      it("should send/receive properly over HTTP", async () => { 
+        const testRoleAssignments: meta.List<RoleAssignment> = {
+          metadata: {},
+          items: [
+            {
+              principal: {
+                type: PrincipalTypeUser,
+                id: "tony@starkindustries.com"
+              },
+              role: "ceo"
+            }
+          ]
+        }
+        await common.testClient({
+          expectedRequestMethod: "GET",
+          expectedRequestPath: "/v2/role-assignments",
+          expectedRequestParams: new Map<string, string>([
+            ["principalType", String(PrincipalTypeUser)],
+            ["principalID", "tony@starkindustries.com"],
+            ["role", "ceo"],
+          ]),
+          mockResponseBody: testRoleAssignments,
+          clientInvocationLogic: () => {
+            return client.list({
+              principal: {
+                type: PrincipalTypeUser,
+                id: "tony@starkindustries.com",
+              },
+              role: "ceo"
+            })
+          }
+        })
+      })
+    })
+
     describe("#revoke", () => {
       it("should send/receive properly over HTTP", async () => { 
         const testRoleAssignment: RoleAssignment = {
-          role: {
-            type: RoleTypeSystem,
-            name: "ceo"
-          },
+          role: "ceo",
           principal: {
-            type: PrincipalType.User,
+            type: PrincipalTypeUser,
             id: "tony@starkindustries.com"
           }
         }
@@ -53,8 +84,7 @@ describe("roles", () => {
           expectedRequestMethod: "DELETE",
           expectedRequestPath: "/v2/role-assignments",
           expectedRequestParams: new Map<string, string>([
-            ["roleType", String(testRoleAssignment.role.type)],
-            ["roleName", String(testRoleAssignment.role.name)],
+            ["role", String(testRoleAssignment.role)],
             ["principalType", String(testRoleAssignment.principal.type)],
             ["principalID", testRoleAssignment.principal.id]
           ]),
