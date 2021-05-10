@@ -280,6 +280,21 @@ export class EventsClient {
     req.successCode = 201
     return this.rmClient.executeRequest(req) as Promise<Event>
   }
+ 
+  /**
+   * Copies an Event in a terminal state, including Worker configuration and
+   * creates a new Event from this information. Where possible, job results are
+   * inherited and not repeated / re-scheduled, for example when a job has
+   * succeeded and is stateless (i.e. does not make use of a shared workspace).
+   * 
+   * @param id Identifier of the Event to retry
+   * @returns A new Event that is a retry of the original
+   */
+  public async retry(id: string): Promise<Event> {
+    const req = new rm.Request("POST", `v2/events/${id}/retries`)
+    req.successCode = 201
+    return this.rmClient.executeRequest(req) as Promise<Event>
+  }
 
   /**
    * Cancels a single Event specified by ID.
