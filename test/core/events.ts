@@ -158,6 +158,28 @@ describe("events", () => {
       })
     })
 
+    describe("#retry", () => {
+      it("should send/receive properly over HTTP", async () => { 
+        const testOriginalEventID = "tunguska"
+        const testNewEvent: Event = {
+          metadata: {
+            id: "12345"
+          },
+          source: "foo",
+          type: "bar"
+        }
+        await common.testClient({
+          expectedRequestMethod: "POST",
+          expectedRequestPath: `/v2/events/${testOriginalEventID}/retries`,
+          mockResponseCode: 201,
+          mockResponseBody: testNewEvent,
+          clientInvocationLogic: () => {
+            return client.retry(testOriginalEventID)
+          }
+        })
+      })
+    })
+
     describe("#cancel", () => {
       it("should send/receive properly over HTTP", async () => { 
         const testEventID = "12345"
