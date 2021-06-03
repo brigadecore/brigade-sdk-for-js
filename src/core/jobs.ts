@@ -91,10 +91,13 @@ export interface JobSpec {
    */
   sidecarContainers?: { [key: string]: JobContainerSpec }
   /**
-   * Specifies the time, in seconds, that must elapse before a running Job
-   * should be considered to have timed out
+   * Specifies the time duration that must elapse before a running Job should be
+   * considered to have timed out. This duration string is a sequence of decimal
+   * numbers, each with optional fraction and a unit suffix, such as "300ms",
+   * "3.14s" or "2h45m". Valid time units are "ns", "us" (or "µs"), "ms", "s",
+   * "m", "h".
    */
-  timeoutSeconds?: number
+   timeoutDuration?: string
   /**
    * Optional criteria for selecting a suitable host (substrate node) for the
    * Job. This is useful in cases where a Job requires a specific, non-default
@@ -293,6 +296,19 @@ export class JobsClient {
    */
   public async cleanup(eventID: string, jobName: string): Promise<void> {
     const req = new rm.Request("PUT", `v2/events/${eventID}/worker/jobs/${jobName}/cleanup`)
+    return this.rmClient.executeRequest(req) as Promise<void>
+  }
+
+  /**
+   * Forcefully aborts a running Job and updates its status to reflect that it
+   * was timed out.
+   * 
+   * @param eventID The ID of the Event the Job belongs to
+   * @param jobName The Job name
+   * @throws An error if the specified Event or Job thereof is not found
+   */
+  public async timeout(eventID: string, jobName :string): Promise<void> {
+    const req = new rm.Request("PUT", `v2/events/${eventID}/worker/jobs/${jobName}/timeout`)
     return this.rmClient.executeRequest(req) as Promise<void>
   }
 }
