@@ -101,6 +101,20 @@ describe("jobs", () => {
         })
       })
     })
+
+    describe("#timeout", () => {
+      it("should send/receive properly over HTTP", async () => {
+        const testEventID = "12345"
+        const testJobName = "Italian"
+        await common.testClient({
+          expectedRequestMethod: "PUT",
+          expectedRequestPath: `/v2/events/${testEventID}/worker/jobs/${testJobName}/timeout`,
+          clientInvocationLogic: () => {
+            return client.timeout(testEventID, testJobName)
+          }
+        })
+      })
+    })
     
   })
 
