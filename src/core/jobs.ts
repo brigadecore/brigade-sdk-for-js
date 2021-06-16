@@ -11,6 +11,10 @@ export enum JobPhase {
    */
   Aborted = "ABORTED",
   /**
+   * Represents the state wherein a pending Job was canceled prior to execution
+   */
+  Canceled = "CANCELED",
+  /**
    * Represents the state wherein a Job has run to completion but experienced
    * errors
    */
