@@ -1,6 +1,8 @@
 node_modules/
 dist/
 .npmrc
+.brigade/node_modules/
+.brigade/secrets.yaml
 .DS_Store
 
 # IDEs
