@@ -1,6 +1,6 @@
 import { events, Event, Job, ConcurrentGroup, SerialGroup } from "@brigadecore/brigadier"
 
-const releaseTagRegex = /^refs\/tags\/(v[0-9]+(?:\.[0-9]+)*(?:\-.+)?)$/
+const releaseTagRegex = /^refs\/tags\/v([0-9]+(?:\.[0-9]+)*(?:\-.+)?)$/
 
 const img = "node:12.3.1-stretch"
 const localPath = "/workspaces/brigade-sdk-for-js"
