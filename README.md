@@ -1,7 +1,7 @@
 # Brigade SDK for JavaScript
 
-This is an _experimental_ JavaScript (and TypeScript) SDK for the WIP Brigade 2
-event-driven scripting platform (i.e. Brigade v2 itself remains a WIP.)
+This is a JavaScript (and TypeScript) SDK compatible with the _beta_ series of
+releases of the Brigade 2 event-driven scripting platform.
 
 ## Supported Runtimes
 
