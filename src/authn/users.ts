@@ -81,7 +81,7 @@ export class UsersClient {
   /**
    * Deletes a User.
    * 
-   * @param id Identifier of the requested User to delete
+   * @param id Identifier of the User to delete
    */
   public async delete(id: string): Promise<void> {
     const req = new rm.Request("DELETE", `v2/users/${id}`)

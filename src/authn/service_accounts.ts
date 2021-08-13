@@ -100,7 +100,7 @@ export class ServiceAccountsClient {
   /**
    * Deletes a ServiceAccount.
    * 
-   * @param id Identifier of the requested ServiceAccount
+   * @param id Identifier of the ServiceAccount to delete
    */
   public async delete(id: string): Promise<void> {
     const req = new rm.Request("DELETE", `v2/service-accounts/${id}`)
