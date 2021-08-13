@@ -60,6 +60,19 @@ describe("users", () => {
       })
     })
 
+    describe("#delete", () => {
+      it("should send/receive properly over HTTP", async () => {
+        const testUserID = "tony@starkindustries.com"
+        await common.testClient({
+          expectedRequestMethod: "DELETE",
+          expectedRequestPath: `/v2/users/${testUserID}`,
+          clientInvocationLogic: () => {
+            return client.delete(testUserID)
+          }
+        })
+      })
+    })
+
     describe("#lock", () => {
       it("should send/receive properly over HTTP", async () => {
         const testUserID = "tony@starkindustries.com"

@@ -98,6 +98,16 @@ export class ServiceAccountsClient {
   }
 
   /**
+   * Deletes a ServiceAccount.
+   * 
+   * @param id Identifier of the ServiceAccount to delete
+   */
+  public async delete(id: string): Promise<void> {
+    const req = new rm.Request("DELETE", `v2/service-accounts/${id}`)
+    return this.rmClient.executeRequest(req) as Promise<void>
+  }
+
+  /**
    * Revokes system access for a ServiceAccount.
    * 
    * @param id Identifier of the ServiceAccount to be locked

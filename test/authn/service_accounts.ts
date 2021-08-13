@@ -85,6 +85,19 @@ describe("service_accounts", () => {
       })
     })
 
+    describe("#delete", () => {
+      it("should send/receive properly over HTTP", async () => {
+        const testServiceAccountID = "jarvis"
+        await common.testClient({
+          expectedRequestMethod: "DELETE",
+          expectedRequestPath: `/v2/service-accounts/${testServiceAccountID}`,
+          clientInvocationLogic: () => {
+            return client.delete(testServiceAccountID)
+          }
+        })
+      })
+    })
+
     describe("#lock", () => {
       it("should send/receive properly over HTTP", async () => {
         const testServiceAccountID = "jarvis"
