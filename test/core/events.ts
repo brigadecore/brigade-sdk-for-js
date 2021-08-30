@@ -1,4 +1,4 @@
-import { CancelManyEventsResult, DeleteManyEventsResult, Event, EventsClient } from "../../src/core/events" 
+import { CancelManyEventsResult, DeleteManyEventsResult, Event, EventsClient, EventSummary } from "../../src/core/events" 
 import { WorkerPhase } from "../../src/core/workers" 
 import * as meta from "../../src/meta"
 
@@ -153,6 +153,23 @@ describe("events", () => {
           mockResponseBody: testNewEvent,
           clientInvocationLogic: () => {
             return client.clone(testOriginalEventID)
+          }
+        })
+      })
+    })
+
+    describe("#updateSummary", () => {
+      it("should send/receive properly over HTTP", async () => { 
+        const testEventID = "12345"
+        const testSummary: EventSummary = {
+          text: "This is a summary"
+        }
+        await common.testClient({
+          expectedRequestMethod: "PUT",
+          expectedRequestPath: `/v2/events/${testEventID}/summary`,
+          expectedRequestBody: testSummary,
+          clientInvocationLogic: () => {
+            return client.updateSummary(testEventID, testSummary)
           }
         })
       })

@@ -103,6 +103,13 @@ export interface Event {
    */
   payload?: string
   /**
+   * A counterpart to payload. If payload is free-form Worker input,
+	 * then Summary is free-form Worker output. It can optionally be set by a
+	 * Worker to provide a summary of the work completed by the Worker and its
+	 * Jobs.
+   */
+  summary?: string
+  /**
    * Contains details of the Worker assigned to handle the Event
    */
   worker?: Worker
@@ -117,6 +124,16 @@ export interface SourceState {
    * (e.g. the gateway that created it) can use to store source-specific state.
    */
   state?: { [key: string]: string }
+}
+
+/**
+ * Encapsulates an opaque, Worker-specific summary of an Event.
+ */
+export interface EventSummary {
+  /**
+   * The Event summary as (optionally) provided by a Worker.
+   */
+  text: string
 }
 
 /**
@@ -281,6 +298,19 @@ export class EventsClient {
     return this.rmClient.executeRequest(req) as Promise<Event>
   }
  
+  /**
+   * Updates a Worker-specific Event summary.
+   * 
+   * @param id Identifier of the Event to update
+   * @throws An error if the specified Event is not found
+   */
+  public async updateSummary(id: string, summary: EventSummary): Promise<void> {
+    const req = new rm.Request("PUT", `v2/events/${id}/summary`)
+    req.bodyObj = summary
+    req.successCode = 200
+    return this.rmClient.executeRequest(req) as Promise<void>
+  }
+
   /**
    * Copies an Event in a terminal state, including Worker configuration and
    * creates a new Event from this information. Where possible, job results are
