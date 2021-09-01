@@ -306,6 +306,7 @@ export class EventsClient {
    */
   public async updateSummary(id: string, summary: EventSummary): Promise<void> {
     const req = new rm.Request("PUT", `v2/events/${id}/summary`)
+    req.bodyObjKind = "EventSummary"
     req.bodyObj = summary
     req.successCode = 200
     return this.rmClient.executeRequest(req) as Promise<void>
