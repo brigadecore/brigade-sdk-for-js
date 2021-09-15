@@ -1,5 +1,7 @@
 # Brigade SDK for JavaScript
 
+![build](https://badgr.brigade2.io/v1/github/checks/brigadecore/brigade-sdk-for-js/badge.svg?appID=99005)
+
 This is a JavaScript (and TypeScript) SDK compatible with the _beta_ series of
 releases of the Brigade 2 event-driven scripting platform.
 
