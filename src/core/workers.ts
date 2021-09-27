@@ -180,13 +180,13 @@ export interface WorkerSpec {
   logLevel?: LogLevel
   /**
    * Specifies a directory within the Worker's workspace where any relevant
-   * configuration files (e.g. brigade.json, brigade.js, etc.) can be located
+   * configuration files (e.g. brigade.js, package.json, etc.) can be located
    */
   configFilesDirectory?: string
   /**
    * A map of configuration file names to configuration file content. This is
    * useful for Workers that do not integrate with any source control system and
-   * would like to embed configuration (e.g. brigade.json) or scripts (e.g.
+   * would like to embed configuration (e.g. package.json) or scripts (e.g.
    * brigade.js) directly within the WorkerSpec.
    */
   defaultConfigFiles?: { [key: string]: string }
