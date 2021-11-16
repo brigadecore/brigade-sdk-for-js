@@ -3,8 +3,7 @@
 ![build](https://badgr.brigade2.io/v1/github/checks/brigadecore/brigade-sdk-for-js/badge.svg?appID=99005)
 [![slack](https://img.shields.io/badge/slack-brigade-brightgreen.svg?logo=slack)](https://kubernetes.slack.com/messages/C87MF1RFD)
 
-This is a JavaScript (and TypeScript) SDK compatible with the _beta_ series of
-releases of the Brigade 2 event-driven scripting platform.
+This is a Brigade 2-compatible SDK for JavaScript and TypeScript.
 
 ## Supported Runtimes
 
