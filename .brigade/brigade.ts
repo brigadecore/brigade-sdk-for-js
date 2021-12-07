@@ -1,13 +1,11 @@
 import { events, Event, Job, ConcurrentGroup, SerialGroup } from "@brigadecore/brigadier"
 
-const releaseTagRegex = /^refs\/tags\/v([0-9]+(?:\.[0-9]+)*(?:\-.+)?)$/
-
 const img = "node:12.3.1-stretch"
 const localPath = "/workspaces/brigade-sdk-for-js"
 
 // A map of all jobs. When a check_run:rerequested event wants to re-run a
 // single job, this allows us to easily find that job by name.
-const jobs: {[key: string]: (event: Event) => Job } = {}
+const jobs: {[key: string]: (event: Event, version?: string) => Job } = {}
 
 // Basic tests:
 
@@ -34,13 +32,10 @@ const lintJob = (event: Event) => {
 jobs[lintJobName] = lintJob
 
 const publishJobName = "publish"
-const publishJob = (event: Event) => {
-  const matchStr = event.worker.git.ref.match(releaseTagRegex)
-  let version = ""
-  if (matchStr) {
-    let matchTokens = Array.from(matchStr)
-    version = matchTokens[1]
-  }
+const publishJob = (event: Event, version: string) => {
+  // We always have a leading v. We need to remove it because NPM doesn't accept
+  // it.
+  version = version.substr(1)
   const job = new Job("publish", img, event)
   job.primaryContainer.sourceMountPath = localPath
   job.primaryContainer.workingDirectory = localPath
@@ -84,19 +79,9 @@ events.on("brigade.sh/github", "check_run:rerequested", async event => {
   throw new Error(`No job found with name: ${jobName}`)
 })
 
-// Pushing new commits to any branch in github triggers a check suite. Such
-// events are already handled above. Here we're only concerned with the case
-// wherein a new TAG has been pushed-- and even then, we're only concerned with
-// tags that look like a semantic version and indicate a formal release should
-// be performed.
-events.on("brigade.sh/github", "push", async event => {
-  const matchStr = event.worker.git.ref.match(releaseTagRegex)
-  if (matchStr) {
-    // This is an official release with a semantically versioned tag
-    await publishJob(event).run()
-  } else {
-    console.log(`Ref ${event.worker.git.ref} does not match release tag regex (${releaseTagRegex}); not releasing.`)
-  }
+events.on("brigade.sh/github", "release:published", async event => {
+  const version = JSON.parse(event.payload).release.tag_name
+  await publishJob(event, version).run()
 })
 
 events.process()
