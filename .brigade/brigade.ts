@@ -5,7 +5,7 @@ const localPath = "/workspaces/brigade-sdk-for-js"
 
 // A map of all jobs. When a check_run:rerequested event wants to re-run a
 // single job, this allows us to easily find that job by name.
-const jobs: {[key: string]: (event: Event, version?: string) => Job } = {}
+const jobs: {[key: string]: (event: Event) => Job } = {}
 
 // Basic tests:
 
@@ -52,7 +52,6 @@ const publishJob = (event: Event, version: string) => {
   ]
   return job
 }
-jobs[publishJobName] = publishJob
 
 async function runSuite(event: Event): Promise<void> {
   await new ConcurrentGroup( // Basic tests
