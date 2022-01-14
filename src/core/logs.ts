@@ -49,7 +49,7 @@ export interface LogStreamOptions {
   follow?: boolean
 }
 
-class LogEntryStream extends rm.ServerSentEventStream<LogEntry> {
+export class LogEntryStream extends rm.ServerSentEventStream<LogEntry> {
   constructor(path: string, apiToken: string, opts: rm.APIClientOptions) {
     super(path, apiToken, opts)
   }
