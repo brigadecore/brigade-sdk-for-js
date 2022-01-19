@@ -71,7 +71,7 @@ export interface Job {
   /**
    * Contains details of the Job's current state
    */
-  Status?: JobStatus
+  status?: JobStatus
 }
 
 /**
