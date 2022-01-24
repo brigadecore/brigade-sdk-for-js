@@ -103,10 +103,13 @@ describe("projects", () => {
         await common.testClient({
           expectedRequestMethod: "PUT",
           expectedRequestPath: `/v2/projects/${testProject.metadata.id}`,
+          expectedRequestParams: new Map<string, string>([
+            ["create", "true"],
+          ]),
           expectedRequestBody: testProject,
           mockResponseBody: testProject,
           clientInvocationLogic: () => {
-            return client.update(testProject)
+            return client.update(testProject, {CreateIfNotFound: true})
           }
         })
       })
