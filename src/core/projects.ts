@@ -113,6 +113,18 @@ export interface KubernetesDetails {
 }
 
 /**
+ * ProjectUpdateOptions represents useful, optional settings for updating a
+ * Project.
+ */
+export interface ProjectUpdateOptions {
+  /**
+   * CreateIfNotFound when set to true will cause a non-existing Project to be
+   * created instead of updated.
+   */
+  CreateIfNotFound?: boolean
+}
+
+/**
  * A specialized client for managing Projects with the Brigade API.
  */
 export class ProjectsClient {
@@ -188,10 +200,12 @@ export class ProjectsClient {
    * @returns The updated Project (including any changes applied by the system)
    * @throws An error if the requested Project is not found
    */
-  public async update(project: Project): Promise<Project> {
+  public async update(project: Project, opts?: ProjectUpdateOptions): Promise<Project> {
+    opts = opts || {}
     const req = new rm.Request("PUT", `v2/projects/${project.metadata.id}`)
     req.bodyObjKind = "Project"
     req.bodyObj = project
+    req.queryParams = projectUpdateOptionsToQueryParams(opts)
     return this.rmClient.executeRequest(req) as Promise<Project>
   }
 
@@ -224,4 +238,12 @@ export class ProjectsClient {
   public secrets(): SecretsClient {
     return this.secretsClient
   }
+}
+
+function projectUpdateOptionsToQueryParams(opts: ProjectUpdateOptions): Map<string, string> {
+  const queryParams = new Map<string, string>()
+  if (opts.CreateIfNotFound) {
+    queryParams.set("create", "true")
+  }
+  return queryParams
 }
