@@ -11,7 +11,7 @@ const jobs: {[key: string]: (event: Event) => Job } = {}
 
 const testUnitJobName = "test-unit"
 const testUnitJob = (event: Event) => {
-  const job = new Job("test-unit", img, event)
+  const job = new Job(testUnitJobName, img, event)
   job.primaryContainer.sourceMountPath = localPath
   job.primaryContainer.workingDirectory = localPath
   job.primaryContainer.command = ["sh"]
@@ -22,7 +22,7 @@ jobs[testUnitJobName] = testUnitJob
 
 const lintJobName = "lint"
 const lintJob = (event: Event) => {
-  const job = new Job("lint", img, event)
+  const job = new Job(lintJobName, img, event)
   job.primaryContainer.sourceMountPath = localPath
   job.primaryContainer.workingDirectory = localPath
   job.primaryContainer.command = ["sh"]
@@ -31,12 +31,24 @@ const lintJob = (event: Event) => {
 }
 jobs[lintJobName] = lintJob
 
+const auditJobName = "audit"
+const auditJob = (event: Event) => {
+  const job = new Job(auditJobName, img, event)
+  job.primaryContainer.sourceMountPath = localPath
+  job.primaryContainer.workingDirectory = localPath
+  job.primaryContainer.command = ["sh"]
+  job.primaryContainer.arguments = ["-c", "yarn install && yarn audit"]
+  job.fallible = true
+  return job
+}
+jobs[auditJobName] = auditJob
+
 const publishJobName = "publish"
 const publishJob = (event: Event, version: string) => {
   // We always have a leading v. We need to remove it because NPM doesn't accept
   // it.
   version = version.substr(1)
-  const job = new Job("publish", img, event)
+  const job = new Job(publishJobName, img, event)
   job.primaryContainer.sourceMountPath = localPath
   job.primaryContainer.workingDirectory = localPath
   job.primaryContainer.environment = {
@@ -56,7 +68,8 @@ const publishJob = (event: Event, version: string) => {
 async function runSuite(event: Event): Promise<void> {
   await new ConcurrentGroup( // Basic tests
     testUnitJob(event),
-    lintJob(event)
+    lintJob(event),
+    auditJob(event)
   ).run()
 }
 
