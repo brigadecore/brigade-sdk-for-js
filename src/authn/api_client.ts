@@ -38,8 +38,8 @@ export class APIClient {
    * Returns a PrincipalReference for the currently authenticated principal.
    *
    * @returns A PrincipalReference for the currently authenticated principal
-   */
-   public async whoAmI(): Promise<PrincipalReference> {
+  */
+  public async whoAmI(): Promise<PrincipalReference> {
     const req = new rm.Request("GET", "v2/whoami")
     return this.rmClient.executeRequest(req) as Promise<PrincipalReference>
   }
