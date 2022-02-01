@@ -1,5 +1,7 @@
+
 import * as rm from "../rest_machinery"
 
+import { PrincipalReference } from "../lib/authz"
 import { ServiceAccountsClient } from "./service_accounts"
 import { SessionsClient } from "./sessions"
 import { UsersClient } from "./users"
@@ -9,6 +11,7 @@ import { UsersClient } from "./users"
  * authn module.
  */
 export class APIClient {
+  private rmClient: rm.Client
   private serviceAccountsClient: ServiceAccountsClient
   private sessionsClient: SessionsClient
   private usersClient: UsersClient
@@ -25,9 +28,20 @@ export class APIClient {
    * new APIClient("https://brigade.example.com", apiToken, {allowInsecureConnections: true})
    */
   constructor(apiAddress: string, apiToken: string, opts?: rm.APIClientOptions) {
+    this.rmClient = new rm.Client(apiAddress, apiToken, opts)
     this.serviceAccountsClient = new ServiceAccountsClient(apiAddress, apiToken, opts)
     this.sessionsClient = new SessionsClient(apiAddress, apiToken, opts)
     this.usersClient = new UsersClient(apiAddress, apiToken, opts)
+  }
+
+  /**
+   * Returns a PrincipalReference for the currently authenticated principal.
+   *
+   * @returns A PrincipalReference for the currently authenticated principal
+  */
+  public async whoAmI(): Promise<PrincipalReference> {
+    const req = new rm.Request("GET", "v2/whoami")
+    return this.rmClient.executeRequest(req) as Promise<PrincipalReference>
   }
 
   /**
