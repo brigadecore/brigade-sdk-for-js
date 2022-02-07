@@ -4,6 +4,7 @@ import * as brigade from "../../../dist/index.js"
 
 const apiAddress = ""
 const rootPassword = ""
+const ignoreSSLErrors = true
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -12,14 +13,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Get a client without using a token. We'll use this to log in as root and
     // create a service a service account that the remainder of the tests will
     // utilize
-    let client = new brigade.APIClient(apiAddress, "")
+    let client = new brigade.APIClient(
+      apiAddress,
+      "",
+      { allowInsecureConnections: ignoreSSLErrors }
+    )
 
     document.writeln("Creating a root session...<br/>")
     let token = await client.authn().sessions().createRootSession(rootPassword)
 
     // Refresh the client using the root token
     document.writeln("Refreshing the client using root session's token...<br/>")
-    client = new brigade.APIClient(apiAddress, token.value)
+    client = new brigade.APIClient(
+      apiAddress,
+      token.value,
+      { allowInsecureConnections: ignoreSSLErrors }
+    )
 
     const serviceAccountID = uniqueNamesGenerator({
       dictionaries: [adjectives, animals],
@@ -129,6 +138,11 @@ document.addEventListener('DOMContentLoaded', async () => {
           id: projectID,
         },
         spec: {
+          eventSubscriptions: [{
+            source: "foobar",
+            types: ["batbaz"],
+            labels: {},
+          }],
           workerTemplate: {
             defaultConfigFiles: {
               "brigade.js": `console.log("Hello, World!")`

@@ -138,6 +138,11 @@ await client.core().projects().create(
       id: projectID,
     },
     spec: {
+      eventSubscriptions: [{
+        source: "foobar",
+        types: ["batbaz"],
+        labels: {},
+      }],
       workerTemplate: {
         defaultConfigFiles: {
           "brigade.js": `console.log("Hello, World!")`
