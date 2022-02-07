@@ -19,6 +19,7 @@ describe("project_roles", () => {
       it("should send/receive properly over HTTP", async () => { 
         const testProjectID = "avengers-initiative"
         const testProjectRoleAssignment: ProjectRoleAssignment = {
+          projectID: testProjectID,
           role: "ceo",
           principal: {
             type: PrincipalTypeUser,
@@ -37,20 +38,45 @@ describe("project_roles", () => {
     })
 
     describe("#list", () => {
-      it("should send/receive properly over HTTP", async () => { 
+      const testProjectRoleAssignments: meta.List<ProjectRoleAssignment> = {
+        metadata: {},
+        items: [
+          {
+            projectID: "avengers-initiative",
+            principal: {
+              type: PrincipalTypeUser,
+              id: "tony@starkindustries.com"
+            },
+            role: "ceo"
+          }
+        ]
+      }
+      it("should send/receive properly over HTTP when project ID is not specified", async () => {  
+        await common.testClient({
+          expectedRequestMethod: "GET",
+          expectedRequestPath: "/v2/project-role-assignments",
+          expectedRequestParams: new Map<string, string>([
+            ["principalType", String(PrincipalTypeUser)],
+            ["principalID", "tony@starkindustries.com"],
+            ["role", "ceo"],
+          ]),
+          mockResponseBody: testProjectRoleAssignments,
+          clientInvocationLogic: () => {
+            return client.list(
+              "",
+              {
+                principal: {
+                  type: PrincipalTypeUser,
+                  id: "tony@starkindustries.com",
+                },
+                role: "ceo"
+              }
+            )
+          }
+        })
+      })
+      it("should send/receive properly over HTTP when project ID is specified", async () => { 
         const testProjectID = "bluebook"
-        const testProjectRoleAssignments: meta.List<ProjectRoleAssignment> = {
-          metadata: {},
-          items: [
-            {
-              principal: {
-                type: PrincipalTypeUser,
-                id: "tony@starkindustries.com"
-              },
-              role: "ceo"
-            }
-          ]
-        }
         await common.testClient({
           expectedRequestMethod: "GET",
           expectedRequestPath: `/v2/projects/${testProjectID}/role-assignments`,

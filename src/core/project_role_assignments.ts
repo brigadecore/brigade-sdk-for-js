@@ -8,6 +8,10 @@ import * as rm from "../rest_machinery"
  */
 export interface ProjectRoleAssignment {
 	/**
+	 * Qualifies the scope of the Role
+	 */
+  projectID?: string
+	/**
 	 * Assigns a Role to the specified principal
 	 */
 	role: Role
@@ -66,6 +70,8 @@ export class ProjectRoleAssignmentsClient {
    * exist
    */
   public grant(projectID: string, projectRoleAssignment: ProjectRoleAssignment): Promise<void> {
+    // Blank this out because the schema won't accept it.
+    delete projectRoleAssignment.projectID
     const req = new rm.Request("POST", `v2/projects/${projectID}/role-assignments`)
     req.bodyObjKind = "ProjectRoleAssignment"
     req.bodyObj = projectRoleAssignment
@@ -82,7 +88,11 @@ export class ProjectRoleAssignmentsClient {
    * @returns A list of ProjectRoleAssignments
    */
   public async list(projectID: string, selector?: ProjectRoleAssignmentsSelector, opts?: meta.ListOptions): Promise<meta.List<ProjectRoleAssignment>> {
-    const req = new rm.Request("GET", `v2/projects/${projectID}/role-assignments`)
+    let path = "v2/project-role-assignments"
+    if (projectID && projectID !== "") {
+      path = `v2/projects/${projectID}/role-assignments`
+    }
+    const req = new rm.Request("GET", path)
     req.listOpts = opts
     req.queryParams = new Map<string, string>()
     if (selector) {
