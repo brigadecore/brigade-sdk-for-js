@@ -38,9 +38,10 @@ export class Client {
       }
     }
 
-    const headers: any = { // eslint-disable-line @typescript-eslint/no-explicit-any
+    const headers: any = {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       "Content-Type": "application/json",
-      "Accept": "application/json"
+      Accept: "application/json"
     }
     if (req.includeTokenAuthHeader) {
       headers["Authorization"] = `Bearer ${this.apiToken}`
@@ -82,35 +83,39 @@ export class Client {
       data: req.bodyObj,
       validateStatus: null // We'll check it ourselves
     })
-    
+
     if (response.status == Number(req.successCode)) {
       return response.data
     }
 
-    switch(response.status) {
-    case 401:
-      throw new Error(`Could not authenticate the request: ${response.data.reason}`)
-    case 403:
-      throw new Error("The request is not authorized.")
-    case 400: {
-      let msg = `Bad request: ${response.data.reason}`
-      if (response.data.details) {
-        response.data.details.forEach((value: string, index: number) => {
-          msg = msg + `\n  ${index}. ${value}`
-        })
+    switch (response.status) {
+      case 401:
+        throw new Error(
+          `Could not authenticate the request: ${response.data.reason}`
+        )
+      case 403:
+        throw new Error("The request is not authorized.")
+      case 400: {
+        let msg = `Bad request: ${response.data.reason}`
+        if (response.data.details) {
+          response.data.details.forEach((value: string, index: number) => {
+            msg = msg + `\n  ${index}. ${value}`
+          })
+        }
+        throw new Error(msg)
       }
-      throw new Error(msg)
-    }
-    case 404:
-      throw new Error(`${response.data.type} "${response.data.id}" not found.`)
-    case 409:
-      throw new Error(response.data.reason)
-    case 500:
-      throw new Error("An internal server error occurred.")
-    case 501:
-      throw new Error(`Request not supported: ${response.data.details}`)
-    default:
-      throw new Error(`received ${response.status} from API server`)
+      case 404:
+        throw new Error(
+          `${response.data.type} "${response.data.id}" not found.`
+        )
+      case 409:
+        throw new Error(response.data.reason)
+      case 500:
+        throw new Error("An internal server error occurred.")
+      case 501:
+        throw new Error(`Request not supported: ${response.data.details}`)
+      default:
+        throw new Error(`received ${response.status} from API server`)
     }
   }
 }

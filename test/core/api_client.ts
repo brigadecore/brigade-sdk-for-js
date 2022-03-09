@@ -6,9 +6,7 @@ import "mocha"
 import { assert } from "chai"
 
 describe("api_client", () => {
-
   describe("APIClient", () => {
-
     const client = new APIClient(common.testAPIAddress, common.testAPIToken)
 
     describe("#event", () => {
@@ -28,7 +26,5 @@ describe("api_client", () => {
         assert.isDefined(client.substrate())
       })
     })
-
   })
-
 })

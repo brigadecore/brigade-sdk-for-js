@@ -1,4 +1,7 @@
-import { ServiceAccount, ServiceAccountsClient } from "../../src/authn/service_accounts"
+import {
+  ServiceAccount,
+  ServiceAccountsClient
+} from "../../src/authn/service_accounts"
 import { Token } from "../../src/authn/tokens"
 import * as meta from "../../src/meta"
 
@@ -7,10 +10,11 @@ import * as common from "../common"
 import "mocha"
 
 describe("service_accounts", () => {
-
   describe("ServiceAccountsClient", () => {
-
-    const client = new ServiceAccountsClient(common.testAPIAddress, common.testAPIToken)
+    const client = new ServiceAccountsClient(
+      common.testAPIAddress,
+      common.testAPIToken
+    )
 
     describe("#create", () => {
       it("should send/receive properly over HTTP", async () => {
@@ -114,7 +118,7 @@ describe("service_accounts", () => {
     describe("#unlock", () => {
       it("should send/receive properly over HTTP", async () => {
         const testServiceAccountID = "jarvis"
-        const testServiceAccountToken: Token  = {
+        const testServiceAccountToken: Token = {
           value: "opensesame"
         }
         await common.testClient({
@@ -127,7 +131,5 @@ describe("service_accounts", () => {
         })
       })
     })
-
   })
-
 })

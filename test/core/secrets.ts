@@ -6,25 +6,23 @@ import * as common from "../common"
 import "mocha"
 
 describe("secrets", () => {
-
   describe("SecretsClient", () => {
-
     const client = new SecretsClient(common.testAPIAddress, common.testAPIToken)
 
     describe("#list", () => {
-      it("should send/receive properly over HTTP", async () => { 
+      it("should send/receive properly over HTTP", async () => {
         const testProjectID = "bluebook"
         const testSecrets: meta.List<Secret> = {
           metadata: {},
           items: [
             {
-              key:   "soylentgreen",
+              key: "soylentgreen",
               value: "people"
             },
             {
-              key:   "whodunit",
+              key: "whodunit",
               value: "thebutler"
-            },
+            }
           ]
         }
         await common.testClient({
@@ -39,10 +37,10 @@ describe("secrets", () => {
     })
 
     describe("#set", () => {
-      it("should send/receive properly over HTTP", async () => { 
+      it("should send/receive properly over HTTP", async () => {
         const testProjectID = "bluebook"
         const testSecret: Secret = {
-          key:   "soylentgreen",
+          key: "soylentgreen",
           value: "people"
         }
         await common.testClient({
@@ -57,7 +55,7 @@ describe("secrets", () => {
     })
 
     describe("#unset", () => {
-      it("should send/receive properly over HTTP", async () => { 
+      it("should send/receive properly over HTTP", async () => {
         const testProjectID = "bluebook"
         const testSecretKey = "soylentgreen"
         await common.testClient({
@@ -69,7 +67,5 @@ describe("secrets", () => {
         })
       })
     })
-
   })
-
 })

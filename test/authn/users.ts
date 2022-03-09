@@ -6,9 +6,7 @@ import * as common from "../common"
 import "mocha"
 
 describe("users", () => {
-
   describe("UsersClient", () => {
-  
     const client = new UsersClient(common.testAPIAddress, common.testAPIToken)
 
     describe("#list", () => {
@@ -98,7 +96,5 @@ describe("users", () => {
         })
       })
     })
-
   })
-
 })

@@ -24,7 +24,11 @@ export class APIClient {
    * @example
    * new APIClient("https://brigade.example.com", apiToken, {allowInsecureConnections: true})
    */
-  constructor(apiAddress: string, apiToken: string, opts?: rm.APIClientOptions) {
+  constructor(
+    apiAddress: string,
+    apiToken: string,
+    opts?: rm.APIClientOptions
+  ) {
     this.eventsClient = new EventsClient(apiAddress, apiToken, opts)
     this.projectsClient = new ProjectsClient(apiAddress, apiToken, opts)
     this.substrateClient = new SubstrateClient(apiAddress, apiToken, opts)
@@ -32,7 +36,7 @@ export class APIClient {
 
   /**
    * Returns a specialized client for Event management.
-   * 
+   *
    * @returns A specialized client for Event management
    */
   public events(): EventsClient {
@@ -41,7 +45,7 @@ export class APIClient {
 
   /**
    * Returns a specialized client for Project management.
-   * 
+   *
    * @returns a specialized client for Project management
    */
   public projects(): ProjectsClient {
@@ -50,11 +54,10 @@ export class APIClient {
 
   /**
    * Returns a specialized client for substrate monitoring.
-   * 
+   *
    * @returns a specialized client for substrate monitoring
    */
   public substrate(): SubstrateClient {
     return this.substrateClient
   }
-
 }

@@ -26,13 +26,17 @@ export class SubstrateClient {
    * @example
    * new SubstrateClient("https://brigade.example.com", apiToken, {allowInsecureConnections: true})
    */
-  constructor(apiAddress: string, apiToken: string, opts?: rm.APIClientOptions) {
+  constructor(
+    apiAddress: string,
+    apiToken: string,
+    opts?: rm.APIClientOptions
+  ) {
     this.rmClient = new rm.Client(apiAddress, apiToken, opts)
   }
 
   /**
    * Counts running Workers.
-   * 
+   *
    * @returns A count of running Workers
    */
   public async countRunningWorkers(): Promise<SubstrateWorkerCount> {
@@ -42,7 +46,7 @@ export class SubstrateClient {
 
   /**
    * Counts running Jobs.
-   * 
+   *
    * @returns A count of running Jobs
    */
   public async countRunningJobs(): Promise<SubstrateJobCount> {

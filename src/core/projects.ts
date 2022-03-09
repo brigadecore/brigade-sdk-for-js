@@ -46,13 +46,13 @@ export interface Project {
  * possibility of future expansion without having to change client function
  * signatures.
  */
-export interface ProjectsSelector{} // eslint-disable-line @typescript-eslint/no-empty-interface
+export interface ProjectsSelector {} // eslint-disable-line @typescript-eslint/no-empty-interface
 
 /**
  * The technical component of a Project. It pairs EventSubscriptions with a
  * prototypical WorkerSpec that is used as a template for creating new Workers.
  */
-export interface ProjectSpec{
+export interface ProjectSpec {
   /**
    * Defines a set of trigger conditions under which a new Worker should be
    * created
@@ -143,7 +143,11 @@ export class ProjectsClient {
    * @example
    * new ProjectsClient("https://brigade.example.com", apiToken, {allowInsecureConnections: true})
    */
-  constructor(apiAddress: string, apiToken: string, opts?: rm.APIClientOptions) {
+  constructor(
+    apiAddress: string,
+    apiToken: string,
+    opts?: rm.APIClientOptions
+  ) {
     this.rmClient = new rm.Client(apiAddress, apiToken, opts)
     this.authzClient = new AuthzClient(apiAddress, apiToken, opts)
     this.secretsClient = new SecretsClient(apiAddress, apiToken, opts)
@@ -151,7 +155,7 @@ export class ProjectsClient {
 
   /**
    * Creates a new Project.
-   * 
+   *
    * @param project A new Project
    * @returns The new Project (including any changes applied by the system)
    * @throws An error if a Project with the specified ID already exists
@@ -172,10 +176,14 @@ export class ProjectsClient {
    *
    * @param [selector] Optional selection criteria
    * @param [opts] Options used to retrieve a specific page from a paginated
-   * list 
+   * list
    * @returns A list of Projects
    */
-  public async list(selector?: ProjectsSelector, opts?: meta.ListOptions): Promise<meta.List<Project>> { // eslint-disable-line @typescript-eslint/no-unused-vars
+  public async list(
+    selector?: ProjectsSelector,
+    opts?: meta.ListOptions
+  ): Promise<meta.List<Project>> {
+    // eslint-disable-line @typescript-eslint/no-unused-vars
     const req = new rm.Request("GET", "v2/projects")
     req.listOpts = opts
     return this.rmClient.executeRequest(req) as Promise<meta.List<Project>>
@@ -183,7 +191,7 @@ export class ProjectsClient {
 
   /**
    * Returns a Project by ID.
-   * 
+   *
    * @param id Identifier of the requested Project
    * @returns The requested Project
    * @throws An error if the requested Project is not found
@@ -195,12 +203,15 @@ export class ProjectsClient {
 
   /**
    * Updates an existing Project.
-   * 
+   *
    * @param project The updated Project
    * @returns The updated Project (including any changes applied by the system)
    * @throws An error if the requested Project is not found
    */
-  public async update(project: Project, opts?: ProjectUpdateOptions): Promise<Project> {
+  public async update(
+    project: Project,
+    opts?: ProjectUpdateOptions
+  ): Promise<Project> {
     opts = opts || {}
     const req = new rm.Request("PUT", `v2/projects/${project.metadata.id}`)
     req.bodyObjKind = "Project"
@@ -211,7 +222,7 @@ export class ProjectsClient {
 
   /**
    * Deletes a Project.
-   * 
+   *
    * @param id The identifier of the Project to delete
    */
   public async delete(id: string): Promise<void> {
@@ -222,7 +233,7 @@ export class ProjectsClient {
   /**
    * Returns a specialized client for managing project-level authorization
    * concerns.
-   * 
+   *
    * @returns a specialized client for managing project-level authorization
    * concerns
    */
@@ -232,7 +243,7 @@ export class ProjectsClient {
 
   /**
    * Returns a specialized client for managing Project Secrets.
-   * 
+   *
    * @returns a specialized client for managing Project Secrets
    */
   public secrets(): SecretsClient {
@@ -240,7 +251,9 @@ export class ProjectsClient {
   }
 }
 
-function projectUpdateOptionsToQueryParams(opts: ProjectUpdateOptions): Map<string, string> {
+function projectUpdateOptionsToQueryParams(
+  opts: ProjectUpdateOptions
+): Map<string, string> {
   const queryParams = new Map<string, string>()
   if (opts.CreateIfNotFound) {
     queryParams.set("create", "true")

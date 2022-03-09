@@ -10,15 +10,11 @@ import "mocha"
 // import { assert } from "chai"
 
 describe("logs", () => {
-
   describe("LogsClient", () => {
-
     // const client = new LogsClient(common.testAPIAddress, common.testAPIToken)
 
     describe("#stream", () => {
       // TODO: Test this
     })
-
   })
-
 })

@@ -8,13 +8,11 @@ import { assert } from "chai"
 import { PrincipalReference } from "../../src/lib/authz"
 
 describe("api_client", () => {
-
   describe("APIClient", () => {
-
     const client = new APIClient(common.testAPIAddress, common.testAPIToken)
 
     describe("#whoami", () => {
-      it("should send/receive properly over HTTP", async () => { 
+      it("should send/receive properly over HTTP", async () => {
         const testRef: PrincipalReference = {
           type: PrincipalTypeUser,
           id: "stark"
@@ -47,7 +45,5 @@ describe("api_client", () => {
         assert.isDefined(client.users())
       })
     })
-
   })
-
 })

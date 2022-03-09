@@ -4,7 +4,6 @@ import * as core from "./core"
 import * as rm from "./rest_machinery"
 import * as system from "./system"
 
-
 /**
  * APIClient is the root of a tree of more specialized Brigade API clients.
  */
@@ -25,7 +24,11 @@ export class APIClient {
    * @example
    * new APIClient("https://brigade.example.com", apiToken, {allowInsecureConnections: true})
    */
-  constructor(apiAddress: string, apiToken: string, opts?: rm.APIClientOptions) {
+  constructor(
+    apiAddress: string,
+    apiToken: string,
+    opts?: rm.APIClientOptions
+  ) {
     this.authnClient = new authn.APIClient(apiAddress, apiToken, opts)
     this.authzClient = new authz.APIClient(apiAddress, apiToken, opts)
     this.coreClient = new core.APIClient(apiAddress, apiToken, opts)
@@ -35,7 +38,7 @@ export class APIClient {
   /**
    * Returns a specialized client for managing identity and authentication
    * concerns.
-   * 
+   *
    * @returns A specialized client for managing identity, authentication,
    * and authorization concerns
    */
@@ -46,7 +49,7 @@ export class APIClient {
   /**
    * Returns a specialized client for managing system-wide authorization
    * configuration.
-   * 
+   *
    * @returns A specialized client for managing system-wide Brigade
    * configuration
    */
@@ -57,7 +60,7 @@ export class APIClient {
   /**
    * Returns a specialized client for managing core Brigade resources such as
    * Projects and Events.
-   * 
+   *
    * @returns A specialized client for managing core Brigade resources such
    * as Projects and Events
    */
@@ -67,11 +70,10 @@ export class APIClient {
 
   /**
    * Returns a specialized client for performing system-level operations.
-   * 
+   *
    * @returns A specialized client for performing system-level operations.
    */
   public system(): system.APIClient {
-    return this.systemClient  
+    return this.systemClient
   }
-
 }

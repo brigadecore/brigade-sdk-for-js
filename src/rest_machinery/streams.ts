@@ -23,33 +23,38 @@ export class ServerSentEventStream<T> {
   private eventEmitter: EventEmitter
 
   constructor(path: string, apiToken: string, opts: APIClientOptions) {
-    this.eventSource = new ES(
-      path,
-      {
-        https: {
-          // This option might not work in the browser
-          rejectUnauthorized: !opts.allowInsecureConnections
-        },
-        headers: {
-          "Authorization": `Bearer ${apiToken}`
-        }
+    this.eventSource = new ES(path, {
+      https: {
+        // This option might not work in the browser
+        rejectUnauthorized: !opts.allowInsecureConnections
+      },
+      headers: {
+        Authorization: `Bearer ${apiToken}`
       }
-    )
+    })
     this.eventEmitter = new EventEmitter()
-    this.eventSource.addEventListener("message", (event: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+    this.eventSource.addEventListener("message", (event: any) => {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       const data = JSON.parse(event.data)
       this.eventEmitter.emit("data", data)
     })
-    this.eventSource.addEventListener("error", (e: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+    this.eventSource.addEventListener("error", (e: any) => {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       if (e.status) {
         this.eventSource.close()
-        this.eventEmitter.emit("error", new Error(`received ${e.status} from the API server`))
+        this.eventEmitter.emit(
+          "error",
+          new Error(`received ${e.status} from the API server`)
+        )
       } else if (this.eventSource.readyState == ES.CONNECTING) {
         this.eventEmitter.emit("connecting")
       } else if (this.eventSource.readyState == ES.CLOSED) {
         this.eventEmitter.emit("closed")
       } else {
-        this.eventEmitter.emit("error", new Error("encountered unknown error receiving log stream"))
+        this.eventEmitter.emit(
+          "error",
+          new Error("encountered unknown error receiving log stream")
+        )
       }
     })
     this.eventSource.addEventListener("done", () => {

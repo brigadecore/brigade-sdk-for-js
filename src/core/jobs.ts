@@ -101,7 +101,7 @@ export interface JobSpec {
    * "3.14s" or "2h45m". Valid time units are "ns", "us" (or "µs"), "ms", "s",
    * "m", "h".
    */
-   timeoutDuration?: string
+  timeoutDuration?: string
   /**
    * Optional criteria for selecting a suitable host (substrate node) for the
    * Job. This is useful in cases where a Job requires a specific, non-default
@@ -123,7 +123,7 @@ export interface JobContainerSpec extends ContainerSpec {
    * the Worker's shared workspace should be mounted. If left unspecified, the
    * Job implicitly does not use the Worker's shared workspace.
    */
-	workspaceMountPath?: string
+  workspaceMountPath?: string
   /**
    * Specifies the path in the OCI container's file system where, if applicable,
    * source code retrieved from a VCS repository should be mounted. If left
@@ -148,18 +148,18 @@ export interface JobContainerSpec extends ContainerSpec {
    * DISCOURAGED. Note this field REQUESTS to mount the host's Docker socket
    * into the container, but that may be disallowed by Project-level
    * configuration.
-   * 
+   *
    * Host Docker socket access may be disallowed by Brigade project configuration.
    * If so, the container will run without such access.
-   * 
+   *
    * Note: This is being removed for the 2.0.0 release because of security
    * issues AND declining usefulness. (Many Kubernetes distros now use
    * containerd instead of Docker.) This can be put back in the future if the
    * need is proven AND if it can be done safely.
-   * 
+   *
    * For more details, see https://github.com/brigadecore/brigade/issues/1666
    */
-	// useHostDockerSocket?: boolean
+  // useHostDockerSocket?: boolean
 }
 
 /**
@@ -177,7 +177,7 @@ export interface JobHost {
    * This provides an opaque mechanism for communicating Job needs such as
    * specific hardware like an SSD or GPU.
    */
-	nodeSelector?: { [key: string]: string }
+  nodeSelector?: { [key: string]: string }
 }
 
 /**
@@ -226,13 +226,16 @@ export class JobsClient {
    * @example
    * new JobsClient("https://brigade.example.com", apiToken, {allowInsecureConnections: true})
    */
-  constructor(apiAddress: string, apiToken: string, opts?: rm.APIClientOptions) {
+  constructor(
+    apiAddress: string,
+    apiToken: string,
+    opts?: rm.APIClientOptions
+  ) {
     this.apiAddress = apiAddress
     this.apiToken = apiToken
     this.opts = opts || {}
     this.rmClient = new rm.Client(apiAddress, apiToken, opts)
   }
-
 
   /**
    * Creates a new pending Job and schedules it for execution.
@@ -251,29 +254,34 @@ export class JobsClient {
     return this.rmClient.executeRequest(req) as Promise<void>
   }
 
-  
   /**
    * Initiates execution of a pending Job.
-   * 
+   *
    * @param eventID The ID of the Event the Job belongs to
    * @param jobName The Job name
    * @throws An error if the specified Event or Job thereof is not found
    */
   public async start(eventID: string, jobName: string): Promise<void> {
-    const req = new rm.Request("PUT", `v2/events/${eventID}/worker/jobs/${jobName}/start`)
+    const req = new rm.Request(
+      "PUT",
+      `v2/events/${eventID}/worker/jobs/${jobName}/start`
+    )
     return this.rmClient.executeRequest(req) as Promise<void>
   }
 
   /**
    * Returns a Job's status
-   * 
+   *
    * @param eventID The ID of the Event the Job belongs to
    * @param jobName The Job name
    * @returns The Job's status
    * @throws An error if the specified Event or Job thereof is not found
    */
   public async getStatus(eventID: string, jobName: string): Promise<JobStatus> {
-    const req = new rm.Request("GET", `v2/events/${eventID}/worker/jobs/${jobName}/status`)
+    const req = new rm.Request(
+      "GET",
+      `v2/events/${eventID}/worker/jobs/${jobName}/status`
+    )
     return this.rmClient.executeRequest(req) as Promise<JobStatus>
   }
 
@@ -281,21 +289,28 @@ export class JobsClient {
     return new JobStatusStream(
       `${this.apiAddress}/v2/events/${eventID}/worker/jobs/${jobName}/status?watch=true&sse=true`,
       this.apiToken,
-      this.opts,
+      this.opts
     )
   }
 
   /**
    * Updates the status of a Job.
-   * 
+   *
    * @param eventID The ID of the Event the Job belongs to
    * @param jobName The Job name
    * @param status The new Job status
    * @throws An error if the specified Event or Job thereof is not found
    * @throws An error if the effective state change is invalid
    */
-  public updateStatus(eventID: string, jobName: string, status: JobStatus): Promise<void> {
-    const req = new rm.Request("PUT", `v2/events/${eventID}/worker/jobs/${jobName}/status`)
+  public updateStatus(
+    eventID: string,
+    jobName: string,
+    status: JobStatus
+  ): Promise<void> {
+    const req = new rm.Request(
+      "PUT",
+      `v2/events/${eventID}/worker/jobs/${jobName}/status`
+    )
     req.bodyObjKind = "JobStatus"
     req.bodyObj = status
     return this.rmClient.executeRequest(req) as Promise<void>
@@ -303,26 +318,32 @@ export class JobsClient {
 
   /**
    * Cleans up after a completed Job.
-   * 
+   *
    * @param eventID The ID of the Event the Job belongs to
    * @param jobName The Job name
    * @throws An error if the specified Event or Job thereof is not found
    */
   public async cleanup(eventID: string, jobName: string): Promise<void> {
-    const req = new rm.Request("PUT", `v2/events/${eventID}/worker/jobs/${jobName}/cleanup`)
+    const req = new rm.Request(
+      "PUT",
+      `v2/events/${eventID}/worker/jobs/${jobName}/cleanup`
+    )
     return this.rmClient.executeRequest(req) as Promise<void>
   }
 
   /**
    * Forcefully aborts a running Job and updates its status to reflect that it
    * was timed out.
-   * 
+   *
    * @param eventID The ID of the Event the Job belongs to
    * @param jobName The Job name
    * @throws An error if the specified Event or Job thereof is not found
    */
-  public async timeout(eventID: string, jobName :string): Promise<void> {
-    const req = new rm.Request("PUT", `v2/events/${eventID}/worker/jobs/${jobName}/timeout`)
+  public async timeout(eventID: string, jobName: string): Promise<void> {
+    const req = new rm.Request(
+      "PUT",
+      `v2/events/${eventID}/worker/jobs/${jobName}/timeout`
+    )
     return this.rmClient.executeRequest(req) as Promise<void>
   }
 }

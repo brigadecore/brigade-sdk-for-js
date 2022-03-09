@@ -7,18 +7,18 @@ import * as rm from "../rest_machinery"
  * ServiceAccount.
  */
 export interface ProjectRoleAssignment {
-	/**
-	 * Qualifies the scope of the Role
-	 */
+  /**
+   * Qualifies the scope of the Role
+   */
   projectID?: string
-	/**
-	 * Assigns a Role to the specified principal
-	 */
-	role: Role
-	/**
-	 * Specifies the principal to whom the Role is assigned
-	 */
-	principal: PrincipalReference
+  /**
+   * Assigns a Role to the specified principal
+   */
+  role: Role
+  /**
+   * Specifies the principal to whom the Role is assigned
+   */
+  principal: PrincipalReference
 }
 
 /**
@@ -31,7 +31,7 @@ export interface ProjectRoleAssignmentsSelector {
    * should be selected.
    */
   principal?: PrincipalReference
-	/**
+  /**
    * Specifies that only ProjectRoleAssignments for the specified Role should be
    * selected.
    */
@@ -56,7 +56,11 @@ export class ProjectRoleAssignmentsClient {
    * @example
    * new ProjectRoleAssignmentsClient("https://brigade.example.com", apiToken, {allowInsecureConnections: true})
    */
-  constructor(apiAddress: string, apiToken: string, opts?: rm.APIClientOptions) {
+  constructor(
+    apiAddress: string,
+    apiToken: string,
+    opts?: rm.APIClientOptions
+  ) {
     this.rmClient = new rm.Client(apiAddress, apiToken, opts)
   }
 
@@ -69,10 +73,16 @@ export class ProjectRoleAssignmentsClient {
    * @throws An error if the specified Project, Role, or principal does not
    * exist
    */
-  public grant(projectID: string, projectRoleAssignment: ProjectRoleAssignment): Promise<void> {
+  public grant(
+    projectID: string,
+    projectRoleAssignment: ProjectRoleAssignment
+  ): Promise<void> {
     // Blank this out because the schema won't accept it.
     delete projectRoleAssignment.projectID
-    const req = new rm.Request("POST", `v2/projects/${projectID}/role-assignments`)
+    const req = new rm.Request(
+      "POST",
+      `v2/projects/${projectID}/role-assignments`
+    )
     req.bodyObjKind = "ProjectRoleAssignment"
     req.bodyObj = projectRoleAssignment
     return this.rmClient.executeRequest(req) as Promise<void>
@@ -81,13 +91,17 @@ export class ProjectRoleAssignmentsClient {
   /**
    * Returns a list of ProjectRoleAssignments ordered by principal type,
    * principalID, and role.
-   * 
+   *
    * @param projectID The Project ID
    * @param [selector] Optional selection criteria
    * @param [opts] Options used to retrieve a specific page from a paginated
    * @returns A list of ProjectRoleAssignments
    */
-  public async list(projectID: string, selector?: ProjectRoleAssignmentsSelector, opts?: meta.ListOptions): Promise<meta.List<ProjectRoleAssignment>> {
+  public async list(
+    projectID: string,
+    selector?: ProjectRoleAssignmentsSelector,
+    opts?: meta.ListOptions
+  ): Promise<meta.List<ProjectRoleAssignment>> {
     let path = "v2/project-role-assignments"
     if (projectID && projectID !== "") {
       path = `v2/projects/${projectID}/role-assignments`
@@ -104,7 +118,9 @@ export class ProjectRoleAssignmentsClient {
         req.queryParams.set("role", String(selector.role))
       }
     }
-    return this.rmClient.executeRequest(req) as Promise<meta.List<ProjectRoleAssignment>> 
+    return this.rmClient.executeRequest(req) as Promise<
+      meta.List<ProjectRoleAssignment>
+    >
   }
 
   /**
@@ -115,8 +131,14 @@ export class ProjectRoleAssignmentsClient {
    * from
    * @throws An error if the specified Project or principal does not exist
    */
-  public revoke(projectID: string, roleAssignment: ProjectRoleAssignment): Promise<void> {
-    const req = new rm.Request("DELETE", `v2/projects/${projectID}/role-assignments`)
+  public revoke(
+    projectID: string,
+    roleAssignment: ProjectRoleAssignment
+  ): Promise<void> {
+    const req = new rm.Request(
+      "DELETE",
+      `v2/projects/${projectID}/role-assignments`
+    )
     req.queryParams = new Map<string, string>()
     req.queryParams.set("role", String(roleAssignment.role))
     req.queryParams.set("principalType", String(roleAssignment.principal.type))

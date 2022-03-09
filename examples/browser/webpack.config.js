@@ -1,6 +1,6 @@
-const { SourceMap } = require('module');
-const path = require('path');
-const webpack = require('webpack');
+const { SourceMap } = require("module")
+const path = require("path")
+const webpack = require("webpack")
 
 module.exports = {
   mode: "development",
@@ -8,24 +8,24 @@ module.exports = {
   node: {
     global: true,
     __filename: false,
-    __dirname: false,
+    __dirname: false
   },
   resolve: {
     fallback: {
-      "events": require.resolve("events/"),
-      "http": false,
-      "https": false,
-      "process": false,
-      "url": false,
-      "util": false
+      events: require.resolve("events/"),
+      http: false,
+      https: false,
+      process: false,
+      url: false,
+      util: false
     }
   },
   plugins: [
     // fix "process is not defined" error:
     // (do "npm install process" before running the build)
     new webpack.ProvidePlugin({
-      process: 'process/browser',
-    }),
+      process: "process/browser"
+    })
   ],
   output: {
     libraryTarget: "umd",
@@ -35,4 +35,4 @@ module.exports = {
   experiments: {
     topLevelAwait: true
   }
-};
+}
