@@ -1,4 +1,4 @@
-import { events, Event, Job, ConcurrentGroup, SerialGroup } from "@brigadecore/brigadier"
+import { events, Event, Job } from "@brigadecore/brigadier"
 
 const img = "node:12.3.1-stretch"
 const localPath = "/workspaces/brigade-sdk-for-js"
@@ -19,6 +19,17 @@ const testUnitJob = (event: Event) => {
   return job
 }
 jobs[testUnitJobName] = testUnitJob
+
+const styleCheckJobName = "style-check"
+const styleCheckJob = (event: Event) => {
+  const job = new Job(styleCheckJobName, img, event)
+  job.primaryContainer.sourceMountPath = localPath
+  job.primaryContainer.workingDirectory = localPath
+  job.primaryContainer.command = ["sh"]
+  job.primaryContainer.arguments = ["-c", "yarn install && yarn style:check"]
+  return job
+}
+jobs[styleCheckJobName] = styleCheckJob
 
 const lintJobName = "lint"
 const lintJob = (event: Event) => {
@@ -66,8 +77,9 @@ const publishJob = (event: Event, version: string) => {
 }
 
 events.on("brigade.sh/github", "ci:pipeline_requested", async event => {
-  await new ConcurrentGroup( // Basic tests
+  await Job.concurrent( // Basic tests
     testUnitJob(event),
+    styleCheckJob(event),
     lintJob(event),
     auditJob(event)
   ).run()
