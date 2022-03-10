@@ -1,6 +1,6 @@
 import * as rm from "../rest_machinery"
 
-import { ContainerSpec } from "./containers" 
+import { ContainerSpec } from "./containers"
 import { Job, JobsClient } from "./jobs"
 
 /**
@@ -22,7 +22,7 @@ export enum LogLevel {
   /**
    * ERROR level granularity in Worker log output
    */
-	Error = "ERROR"
+  Error = "ERROR"
 }
 
 /**
@@ -77,7 +77,7 @@ export enum WorkerPhase {
    * (Kubernetes), for some unanticipated reason, does not know the Worker's
    * (Pod's) state
    */
-	Unknown = "UNKNOWN"
+  Unknown = "UNKNOWN"
 }
 
 /**
@@ -106,7 +106,7 @@ export const WorkerPhasesTerminal: WorkerPhase[] = [
   WorkerPhase.Failed,
   WorkerPhase.SchedulingFailed,
   WorkerPhase.Succeeded,
-  WorkerPhase.TimedOut,
+  WorkerPhase.TimedOut
 ]
 
 /**
@@ -210,7 +210,7 @@ export interface GitConfig {
    * Specifies a tag or branch to be checked out. If left blank, this will
    * default to "master" at runtime.
    */
-  ref?: string 
+  ref?: string
   /**
    * Indicates whether to clone the repository's submodules
    */
@@ -243,15 +243,15 @@ export interface JobPolicies {
   /**
    * Specifies whether the Worker is permitted to launch Jobs that mount the
    * underlying host's Docker socket into its own file system
-   * 
+   *
    * Host Docker socket access may be disallowed by Brigade project configuration.
    * If so, the container will run without such access.
-   * 
+   *
    * Note: This is being removed for the 2.0.0 release because of security
    * issues AND declining usefulness. (Many Kubernetes distros now use
    * containerd instead of Docker.) This can be put back in the future if the
    * need is proven AND if it can be done safely.
-   * 
+   *
    * For more details, see https://github.com/brigadecore/brigade/issues/1666
    */
   // allowDockerSocketMount?: boolean
@@ -275,7 +275,7 @@ export interface WorkerStatus {
    * Indicates where the Worker is in its lifecycle
    */
   phase?: WorkerPhase
- }
+}
 
 class WorkerStatusStream extends rm.ServerSentEventStream<WorkerStatus> {
   constructor(path: string, apiToken: string, opts: rm.APIClientOptions) {
@@ -304,7 +304,11 @@ export class WorkersClient {
    * @example
    * new WorkersClient("https://brigade.example.com", apiToken, {allowInsecureConnections: true})
    */
-  constructor(apiAddress: string, apiToken: string, opts?: rm.APIClientOptions) {
+  constructor(
+    apiAddress: string,
+    apiToken: string,
+    opts?: rm.APIClientOptions
+  ) {
     this.apiAddress = apiAddress
     this.apiToken = apiToken
     this.opts = opts || {}
@@ -314,7 +318,7 @@ export class WorkersClient {
 
   /**
    * Initiates execution of a pending Worker.
-   * 
+   *
    * @param eventID The ID of the Event the Worker belongs to
    * @throws An error if the specified Event is not found
    */
@@ -325,7 +329,7 @@ export class WorkersClient {
 
   /**
    * Returns a Worker's status
-   * 
+   *
    * @param eventID The ID of the Event the Worker belongs to
    * @returns The Worker's status
    * @throws An error if the specified Event is not found
@@ -339,19 +343,22 @@ export class WorkersClient {
     return new WorkerStatusStream(
       `${this.apiAddress}/v2/events/${eventID}/worker/status?watch=true&sse=true`,
       this.apiToken,
-      this.opts,
+      this.opts
     )
   }
 
   /**
    * Updates the status of a Worker.
-   * 
+   *
    * @param eventID The ID of the Event the Worker belongs to
    * @param status The new Worker status
    * @throws An error if the specified Event is not found
    * @throws An error if the effective state change is invalid
    */
-  public async updateStatus(eventID: string, status: WorkerStatus): Promise<void> {
+  public async updateStatus(
+    eventID: string,
+    status: WorkerStatus
+  ): Promise<void> {
     const req = new rm.Request("PUT", `v2/events/${eventID}/worker/status`)
     req.bodyObjKind = "WorkerStatus"
     req.bodyObj = status
@@ -360,7 +367,7 @@ export class WorkersClient {
 
   /**
    * Cleans up after a completed Worker.
-   * 
+   *
    * @param eventID The ID of the Event the Worker belongs to
    * @throws An error if the specified Event is not found
    */
@@ -371,7 +378,7 @@ export class WorkersClient {
 
   /**
    * Returns a specialized client for managing Jobs.
-   * 
+   *
    * @returns A specialized client for managing Jobs
    */
   public jobs(): JobsClient {

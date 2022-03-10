@@ -1,4 +1,3 @@
-
 import * as rm from "../rest_machinery"
 
 import { PrincipalReference } from "../lib/authz"
@@ -27,9 +26,17 @@ export class APIClient {
    * @example
    * new APIClient("https://brigade.example.com", apiToken, {allowInsecureConnections: true})
    */
-  constructor(apiAddress: string, apiToken: string, opts?: rm.APIClientOptions) {
+  constructor(
+    apiAddress: string,
+    apiToken: string,
+    opts?: rm.APIClientOptions
+  ) {
     this.rmClient = new rm.Client(apiAddress, apiToken, opts)
-    this.serviceAccountsClient = new ServiceAccountsClient(apiAddress, apiToken, opts)
+    this.serviceAccountsClient = new ServiceAccountsClient(
+      apiAddress,
+      apiToken,
+      opts
+    )
     this.sessionsClient = new SessionsClient(apiAddress, apiToken, opts)
     this.usersClient = new UsersClient(apiAddress, apiToken, opts)
   }
@@ -38,7 +45,7 @@ export class APIClient {
    * Returns a PrincipalReference for the currently authenticated principal.
    *
    * @returns A PrincipalReference for the currently authenticated principal
-  */
+   */
   public async whoAmI(): Promise<PrincipalReference> {
     const req = new rm.Request("GET", "v2/whoami")
     return this.rmClient.executeRequest(req) as Promise<PrincipalReference>
@@ -46,7 +53,7 @@ export class APIClient {
 
   /**
    * Returns a specialized client for ServiceAccount management.
-   * 
+   *
    * @returns A specialized client for ServiceAccount management
    */
   public serviceAccounts(): ServiceAccountsClient {
@@ -55,7 +62,7 @@ export class APIClient {
 
   /**
    * Returns a specialized client for Session management.
-   * 
+   *
    * @returns A specialized client for Session management
    */
   public sessions(): SessionsClient {
@@ -64,11 +71,10 @@ export class APIClient {
 
   /**
    * Returns a specialized client for User management.
-   * 
+   *
    * @returns A specialized client for User management
    */
   public users(): UsersClient {
     return this.usersClient
   }
-
 }

@@ -55,7 +55,11 @@ export class SessionsClient {
    * @example
    * new SessionsClient("https://brigade.example.com", apiToken, {allowInsecureConnections: true})
    */
-  constructor(apiAddress: string, apiToken: string, opts?: rm.APIClientOptions) {
+  constructor(
+    apiAddress: string,
+    apiToken: string,
+    opts?: rm.APIClientOptions
+  ) {
     this.rmClient = new rm.Client(apiAddress, apiToken, opts)
   }
 
@@ -74,13 +78,11 @@ export class SessionsClient {
     req.headers = new Map<string, string>([
       ["Authorization", `Basic ${encode(`root:${password}`)}`]
     ])
-    req.queryParams = new Map<string, string>([
-      ["root", "true"]
-    ])
+    req.queryParams = new Map<string, string>([["root", "true"]])
     req.successCode = 201
     return this.rmClient.executeRequest(req) as Promise<Token>
   }
-  
+
   /**
    * Creates a new User Session and initiates an authentication workflow with a
    * third-party identity provider.
@@ -88,7 +90,9 @@ export class SessionsClient {
    * @returns Details needed to continue the authentication process with a
    * third-party identity provider.
    */
-  public async createUserSession(opts?: ThirdPartyAuthOptions): Promise<ThirdPartyAuthDetails> {
+  public async createUserSession(
+    opts?: ThirdPartyAuthOptions
+  ): Promise<ThirdPartyAuthDetails> {
     const req = new rm.Request("POST", "v2/sessions")
     if (opts?.successURL) {
       req.queryParams = new Map<string, string>([
@@ -99,7 +103,7 @@ export class SessionsClient {
     req.successCode = 201
     return this.rmClient.executeRequest(req) as Promise<ThirdPartyAuthDetails>
   }
-  
+
   /**
    * Deletes the current Session.
    */

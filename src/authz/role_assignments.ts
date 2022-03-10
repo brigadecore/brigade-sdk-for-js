@@ -24,7 +24,7 @@ export interface RoleAssignmentsSelector {
    * selected.
    */
   principal?: PrincipalReference
-	/**
+  /**
    * Specifies that only RoleAssignments for the specified Role should be
    * selected.
    */
@@ -49,20 +49,27 @@ export class RoleAssignmentsClient {
    * @example
    * new RolesClient("https://brigade.example.com", apiToken, {allowInsecureConnections: true})
    */
-  constructor(apiAddress: string, apiToken: string, opts?: rm.APIClientOptions) {
+  constructor(
+    apiAddress: string,
+    apiToken: string,
+    opts?: rm.APIClientOptions
+  ) {
     this.rmClient = new rm.Client(apiAddress, apiToken, opts)
   }
 
   /**
    * Returns a list of RoleAssignments, ordered by principal type, principalID,
    * role, and scope.
-   * 
+   *
    * @param [selector] Optional selection criteria
    * @param [opts] Options used to retrieve a specific page from a paginated
    * list
    * @returns A list of RoleAssignments
    */
-  public async list(selector?: RoleAssignmentsSelector, opts?: meta.ListOptions): Promise<meta.List<RoleAssignment>> {
+  public async list(
+    selector?: RoleAssignmentsSelector,
+    opts?: meta.ListOptions
+  ): Promise<meta.List<RoleAssignment>> {
     const req = new rm.Request("GET", "v2/role-assignments")
     req.listOpts = opts
     req.queryParams = new Map<string, string>()
@@ -75,12 +82,14 @@ export class RoleAssignmentsClient {
         req.queryParams.set("role", String(selector.role))
       }
     }
-    return this.rmClient.executeRequest(req) as Promise<meta.List<RoleAssignment>> 
+    return this.rmClient.executeRequest(req) as Promise<
+      meta.List<RoleAssignment>
+    >
   }
 
   /**
    * Grants a system-level Role to a principal.
-   * 
+   *
    * @param roleAssignment Specifies the Role to grant and who to grant it to
    * @throws An error if the specified Role or principal does not exist
    */

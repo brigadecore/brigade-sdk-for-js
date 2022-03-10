@@ -63,14 +63,23 @@ export class LogsClient {
   private apiToken: string
   private opts: rm.APIClientOptions
 
-  constructor(apiAddress: string, apiToken: string, opts?: rm.APIClientOptions) {
+  constructor(
+    apiAddress: string,
+    apiToken: string,
+    opts?: rm.APIClientOptions
+  ) {
     this.apiAddress = apiAddress
     this.apiToken = apiToken
     this.opts = opts || {}
   }
 
-  public stream(eventID: string, selector?: LogsSelector, opts?: LogStreamOptions): LogEntryStream {
-    const queryParams: any = { // eslint-disable-line @typescript-eslint/no-explicit-any
+  public stream(
+    eventID: string,
+    selector?: LogsSelector,
+    opts?: LogStreamOptions
+  ): LogEntryStream {
+    const queryParams: any = {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       sse: "true"
     }
 
@@ -88,9 +97,11 @@ export class LogsClient {
     }
 
     return new LogEntryStream(
-      `${this.apiAddress}/v2/events/${eventID}/logs?${querystring.encode(queryParams)}`,
+      `${this.apiAddress}/v2/events/${eventID}/logs?${querystring.encode(
+        queryParams
+      )}`,
       this.apiToken,
-      this.opts,
+      this.opts
     )
   }
 }

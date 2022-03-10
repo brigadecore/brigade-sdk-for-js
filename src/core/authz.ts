@@ -20,7 +20,11 @@ export class AuthzClient {
    * @example
    * new ProjectsClient("https://brigade.example.com", apiToken, {allowInsecureConnections: true})
    */
-  constructor(apiAddress: string, apiToken: string, opts?: rm.APIClientOptions) {
+  constructor(
+    apiAddress: string,
+    apiToken: string,
+    opts?: rm.APIClientOptions
+  ) {
     this.projectRoleAssignmentsClient = new ProjectRoleAssignmentsClient(
       apiAddress,
       apiToken,
@@ -30,11 +34,10 @@ export class AuthzClient {
 
   /**
    * Returns a specialized client for managing project-level RoleAssignments.
-   * 
+   *
    * @returns a specialized client for managing project-level RoleAssignments
    */
   public roleAssignments(): ProjectRoleAssignmentsClient {
     return this.projectRoleAssignmentsClient
   }
-
 }

@@ -1,4 +1,8 @@
-import { WorkerStatus, WorkerPhase, WorkersClient } from "../../src/core/workers"
+import {
+  WorkerStatus,
+  WorkerPhase,
+  WorkersClient
+} from "../../src/core/workers"
 
 import * as common from "../common"
 
@@ -6,11 +10,9 @@ import "mocha"
 import { assert } from "chai"
 
 describe("workers", () => {
-
   describe("WorkersClient", () => {
-
     const client = new WorkersClient(common.testAPIAddress, common.testAPIToken)
-  
+
     describe("#start", () => {
       it("should send/receive properly over HTTP", async () => {
         const testEventID = "12345"
@@ -28,7 +30,7 @@ describe("workers", () => {
       it("should send/receive properly over HTTP", async () => {
         const testEventID = "12345"
         const testWorkerStatus: WorkerStatus = {
-          phase: WorkerPhase.Running,
+          phase: WorkerPhase.Running
         }
         await common.testClient({
           expectedRequestMethod: "GET",
@@ -49,7 +51,7 @@ describe("workers", () => {
       it("should send/receive properly over HTTP", async () => {
         const testEventID = "12345"
         const testWorkerStatus: WorkerStatus = {
-          phase: WorkerPhase.Running,
+          phase: WorkerPhase.Running
         }
         await common.testClient({
           expectedRequestMethod: "PUT",
@@ -80,7 +82,5 @@ describe("workers", () => {
         assert.isDefined(client.jobs())
       })
     })
-
   })
-
 })

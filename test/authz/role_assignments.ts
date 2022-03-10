@@ -1,5 +1,8 @@
 import { RoleAssignment } from "../../src/lib/authz"
-import { PrincipalTypeUser, RoleAssignmentsClient } from "../../src/authz/role_assignments"
+import {
+  PrincipalTypeUser,
+  RoleAssignmentsClient
+} from "../../src/authz/role_assignments"
 import * as meta from "../../src/meta"
 
 import * as common from "../common"
@@ -7,16 +10,14 @@ import * as common from "../common"
 import "mocha"
 
 describe("roles", () => {
-
   describe("RoleAssignmentsClient", () => {
-
     const client = new RoleAssignmentsClient(
       common.testAPIAddress,
       common.testAPIToken
     )
 
     describe("#grant", () => {
-      it("should send/receive properly over HTTP", async () => { 
+      it("should send/receive properly over HTTP", async () => {
         const testRoleAssignment: RoleAssignment = {
           role: "ceo",
           principal: {
@@ -36,7 +37,7 @@ describe("roles", () => {
     })
 
     describe("#list", () => {
-      it("should send/receive properly over HTTP", async () => { 
+      it("should send/receive properly over HTTP", async () => {
         const testRoleAssignments: meta.List<RoleAssignment> = {
           metadata: {},
           items: [
@@ -55,14 +56,14 @@ describe("roles", () => {
           expectedRequestParams: new Map<string, string>([
             ["principalType", String(PrincipalTypeUser)],
             ["principalID", "tony@starkindustries.com"],
-            ["role", "ceo"],
+            ["role", "ceo"]
           ]),
           mockResponseBody: testRoleAssignments,
           clientInvocationLogic: () => {
             return client.list({
               principal: {
                 type: PrincipalTypeUser,
-                id: "tony@starkindustries.com",
+                id: "tony@starkindustries.com"
               },
               role: "ceo"
             })
@@ -72,7 +73,7 @@ describe("roles", () => {
     })
 
     describe("#revoke", () => {
-      it("should send/receive properly over HTTP", async () => { 
+      it("should send/receive properly over HTTP", async () => {
         const testRoleAssignment: RoleAssignment = {
           role: "ceo",
           principal: {
@@ -94,7 +95,5 @@ describe("roles", () => {
         })
       })
     })
-
   })
-
 })

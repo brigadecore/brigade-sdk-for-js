@@ -1,4 +1,4 @@
-import { AuthzClient } from "../../src/core/authz" 
+import { AuthzClient } from "../../src/core/authz"
 
 import * as common from "../common"
 
@@ -6,9 +6,7 @@ import "mocha"
 import { assert } from "chai"
 
 describe("projects", () => {
-
   describe("ProjectsClient", () => {
-    
     const client = new AuthzClient(common.testAPIAddress, common.testAPIToken)
 
     describe("#roleAssignments", () => {
@@ -16,7 +14,5 @@ describe("projects", () => {
         assert.isDefined(client.roleAssignments())
       })
     })
-
   })
-
 })

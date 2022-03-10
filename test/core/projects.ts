@@ -1,4 +1,4 @@
-import { Project, ProjectsClient } from "../../src/core/projects" 
+import { Project, ProjectsClient } from "../../src/core/projects"
 import * as meta from "../../src/meta"
 
 import * as common from "../common"
@@ -7,10 +7,11 @@ import "mocha"
 import { assert } from "chai"
 
 describe("projects", () => {
-
   describe("ProjectsClient", () => {
-    
-    const client = new ProjectsClient(common.testAPIAddress, common.testAPIToken)
+    const client = new ProjectsClient(
+      common.testAPIAddress,
+      common.testAPIToken
+    )
 
     describe("#create", () => {
       it("should send/receive properly over HTTP", async () => {
@@ -56,7 +57,7 @@ describe("projects", () => {
                 workerTemplate: {}
               }
             }
-          ],
+          ]
         }
         await common.testClient({
           expectedRequestMethod: "GET",
@@ -103,13 +104,11 @@ describe("projects", () => {
         await common.testClient({
           expectedRequestMethod: "PUT",
           expectedRequestPath: `/v2/projects/${testProject.metadata.id}`,
-          expectedRequestParams: new Map<string, string>([
-            ["create", "true"],
-          ]),
+          expectedRequestParams: new Map<string, string>([["create", "true"]]),
           expectedRequestBody: testProject,
           mockResponseBody: testProject,
           clientInvocationLogic: () => {
-            return client.update(testProject, {CreateIfNotFound: true})
+            return client.update(testProject, { CreateIfNotFound: true })
           }
         })
       })
@@ -139,7 +138,5 @@ describe("projects", () => {
         assert.isDefined(client.secrets())
       })
     })
-
   })
-
 })

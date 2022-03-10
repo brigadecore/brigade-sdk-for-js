@@ -1,6 +1,6 @@
 export interface ListOptions {
   continue: string
-	limit: number
+  limit: number
 }
 
 export interface List<T> {

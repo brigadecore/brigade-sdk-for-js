@@ -1,17 +1,22 @@
-import { SubstrateWorkerCount, SubstrateJobCount, SubstrateClient } from "../../src/core/substrate"
+import {
+  SubstrateWorkerCount,
+  SubstrateJobCount,
+  SubstrateClient
+} from "../../src/core/substrate"
 
 import * as common from "../common"
 
 import "mocha"
 
 describe("substrate", () => {
-
   describe("SubstrateClient", () => {
-
-    const client = new SubstrateClient(common.testAPIAddress, common.testAPIToken)
+    const client = new SubstrateClient(
+      common.testAPIAddress,
+      common.testAPIToken
+    )
 
     describe("#countRunningWorkers", () => {
-      it("should send/receive properly over HTTP", async () => { 
+      it("should send/receive properly over HTTP", async () => {
         const testCount: SubstrateWorkerCount = {
           count: 5
         }
@@ -27,7 +32,7 @@ describe("substrate", () => {
     })
 
     describe("#countRunningJobs", () => {
-      it("should send/receive properly over HTTP", async () => { 
+      it("should send/receive properly over HTTP", async () => {
         const testCount: SubstrateJobCount = {
           count: 5
         }
@@ -41,7 +46,5 @@ describe("substrate", () => {
         })
       })
     })
-
   })
-
 })

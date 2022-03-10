@@ -1,5 +1,11 @@
-import { CancelManyEventsResult, DeleteManyEventsResult, Event, EventsClient, EventSummary } from "../../src/core/events" 
-import { WorkerPhase } from "../../src/core/workers" 
+import {
+  CancelManyEventsResult,
+  DeleteManyEventsResult,
+  Event,
+  EventsClient,
+  EventSummary
+} from "../../src/core/events"
+import { WorkerPhase } from "../../src/core/workers"
 import * as meta from "../../src/meta"
 
 import * as common from "../common"
@@ -8,9 +14,7 @@ import "mocha"
 import { assert } from "chai"
 
 describe("events", () => {
-
   describe("EventsClient", () => {
-
     const client = new EventsClient(common.testAPIAddress, common.testAPIToken)
 
     describe("#create", () => {
@@ -58,7 +62,7 @@ describe("events", () => {
     })
 
     describe("#list", () => {
-      it("should send/receive properly over HTTP", async () => { 
+      it("should send/receive properly over HTTP", async () => {
         const testProjectID = "bluebook"
         const testWorkerPhase = WorkerPhase.Running
         const testEvents: meta.List<Event> = {
@@ -70,7 +74,7 @@ describe("events", () => {
               },
               projectID: testProjectID,
               source: "foo",
-              type: "bar",
+              type: "bar"
             },
             {
               metadata: {
@@ -78,7 +82,7 @@ describe("events", () => {
               },
               projectID: testProjectID,
               source: "foo",
-              type: "bar",
+              type: "bar"
             }
           ]
         }
@@ -109,7 +113,7 @@ describe("events", () => {
               sourceState: {
                 "do-rei-me": "fa-sol-la-te-doh"
               },
-              workerPhases: [ testWorkerPhase ] ,
+              workerPhases: [testWorkerPhase]
             })
           }
         })
@@ -117,7 +121,7 @@ describe("events", () => {
     })
 
     describe("#get", () => {
-      it("should send/receive properly over HTTP", async () => { 
+      it("should send/receive properly over HTTP", async () => {
         const testEvent: Event = {
           metadata: {
             id: "12345"
@@ -137,7 +141,7 @@ describe("events", () => {
     })
 
     describe("#clone", () => {
-      it("should send/receive properly over HTTP", async () => { 
+      it("should send/receive properly over HTTP", async () => {
         const testOriginalEventID = "tunguska"
         const testNewEvent: Event = {
           metadata: {
@@ -159,7 +163,7 @@ describe("events", () => {
     })
 
     describe("#updateSummary", () => {
-      it("should send/receive properly over HTTP", async () => { 
+      it("should send/receive properly over HTTP", async () => {
         const testEventID = "12345"
         const testSummary: EventSummary = {
           text: "This is a summary"
@@ -176,7 +180,7 @@ describe("events", () => {
     })
 
     describe("#retry", () => {
-      it("should send/receive properly over HTTP", async () => { 
+      it("should send/receive properly over HTTP", async () => {
         const testOriginalEventID = "tunguska"
         const testNewEvent: Event = {
           metadata: {
@@ -198,7 +202,7 @@ describe("events", () => {
     })
 
     describe("#cancel", () => {
-      it("should send/receive properly over HTTP", async () => { 
+      it("should send/receive properly over HTTP", async () => {
         const testEventID = "12345"
         await common.testClient({
           expectedRequestMethod: "PUT",
@@ -211,7 +215,7 @@ describe("events", () => {
     })
 
     describe("#cancelMany", () => {
-      it("should send/receive properly over HTTP", async () => { 
+      it("should send/receive properly over HTTP", async () => {
         const testProjectID = "bluebook"
         const testWorkerPhase = WorkerPhase.Running
         const testResult: CancelManyEventsResult = {
@@ -244,7 +248,7 @@ describe("events", () => {
               sourceState: {
                 "do-rei-me": "fa-sol-la-te-doh"
               },
-              workerPhases: [ testWorkerPhase ] ,
+              workerPhases: [testWorkerPhase]
             })
           }
         })
@@ -252,7 +256,7 @@ describe("events", () => {
     })
 
     describe("#delete", () => {
-      it("should send/receive properly over HTTP", async () => { 
+      it("should send/receive properly over HTTP", async () => {
         const testEventID = "12345"
         await common.testClient({
           expectedRequestMethod: "DELETE",
@@ -265,7 +269,7 @@ describe("events", () => {
     })
 
     describe("#deleteMany", () => {
-      it("should send/receive properly over HTTP", async () => { 
+      it("should send/receive properly over HTTP", async () => {
         const testProjectID = "bluebook"
         const testWorkerPhase = WorkerPhase.Running
         const testResult: DeleteManyEventsResult = {
@@ -298,7 +302,7 @@ describe("events", () => {
               sourceState: {
                 "do-rei-me": "fa-sol-la-te-doh"
               },
-              workerPhases: [ testWorkerPhase ] ,
+              workerPhases: [testWorkerPhase]
             })
           }
         })
@@ -316,7 +320,5 @@ describe("events", () => {
     //     assert.isDefined(client.logs())
     //   })
     // })
-
   })
-
 })

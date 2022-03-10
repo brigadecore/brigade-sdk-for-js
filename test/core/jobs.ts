@@ -5,13 +5,11 @@ import * as common from "../common"
 import "mocha"
 
 describe("jobs", () => {
-
   describe("JobsClient", () => {
-
     const client = new JobsClient(common.testAPIAddress, common.testAPIToken)
 
     describe("#create", () => {
-      it("should send/receive properly over HTTP", async () => { 
+      it("should send/receive properly over HTTP", async () => {
         const testEventID = "12345"
         const testJobName = "Italian"
         const testJob: Job = {
@@ -35,7 +33,7 @@ describe("jobs", () => {
     })
 
     describe("#start", () => {
-      it("should send/receive properly over HTTP", async () => { 
+      it("should send/receive properly over HTTP", async () => {
         const testEventID = "12345"
         const testJobName = "Italian"
         await common.testClient({
@@ -53,7 +51,7 @@ describe("jobs", () => {
         const testEventID = "12345"
         const testJobName = "Italian"
         const testJobStatus: JobStatus = {
-          phase: JobPhase.Running,
+          phase: JobPhase.Running
         }
         await common.testClient({
           expectedRequestMethod: "GET",
@@ -75,7 +73,7 @@ describe("jobs", () => {
         const testEventID = "12345"
         const testJobName = "Italian"
         const testJobStatus: JobStatus = {
-          phase: JobPhase.Running,
+          phase: JobPhase.Running
         }
         await common.testClient({
           expectedRequestMethod: "PUT",
@@ -115,7 +113,5 @@ describe("jobs", () => {
         })
       })
     })
-    
   })
-
 })

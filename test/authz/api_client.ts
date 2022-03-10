@@ -8,9 +8,7 @@ import "mocha"
 import { assert } from "chai"
 
 describe("api_client", () => {
-
   describe("APIClient", () => {
-
     const client = new APIClient(common.testAPIAddress, common.testAPIToken)
 
     describe("#roleAssignments", () => {
@@ -18,7 +16,5 @@ describe("api_client", () => {
         assert.isDefined(client.roleAssignments())
       })
     })
-
   })
-
 })

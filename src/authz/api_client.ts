@@ -20,7 +20,11 @@ export class APIClient {
    * @example
    * new APIClient("https://brigade.example.com", apiToken, {allowInsecureConnections: true})
    */
-  constructor(apiAddress: string, apiToken: string, opts?: rm.APIClientOptions) {
+  constructor(
+    apiAddress: string,
+    apiToken: string,
+    opts?: rm.APIClientOptions
+  ) {
     this.roleAssignmentsClient = new RoleAssignmentsClient(
       apiAddress,
       apiToken,
@@ -30,11 +34,10 @@ export class APIClient {
 
   /**
    * Returns a specialized client for managing system-level RoleAssignments.
-   * 
+   *
    * @returns A specialized client for managing system-level RoleAssignments
    */
   public roleAssignments(): RoleAssignmentsClient {
     return this.roleAssignmentsClient
   }
-
 }

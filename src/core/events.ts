@@ -2,7 +2,7 @@ import * as meta from "../meta"
 import * as rm from "../rest_machinery"
 
 import { LogsClient } from "./logs"
-import { WorkerPhase, Worker, WorkersClient } from "./workers" 
+import { WorkerPhase, Worker, WorkersClient } from "./workers"
 
 /**
  * Represents an occurrence in some upstream system. Once accepted into the
@@ -104,9 +104,9 @@ export interface Event {
   payload?: string
   /**
    * A counterpart to payload. If payload is free-form Worker input,
-	 * then Summary is free-form Worker output. It can optionally be set by a
-	 * Worker to provide a summary of the work completed by the Worker and its
-	 * Jobs.
+   * then Summary is free-form Worker output. It can optionally be set by a
+   * Worker to provide a summary of the work completed by the Worker and its
+   * Jobs.
    */
   summary?: string
   /**
@@ -149,7 +149,7 @@ export interface EventsSelector {
    * Specifies that only Events from the indicated source should be selected.
    */
   source?: string
- /**
+  /**
    * Specifies that only Events having all of the indicated source state
    * key/value pairs should be selected.
    */
@@ -193,7 +193,7 @@ export interface GitDetails {
    * Specifies a tag or branch to be checked out. If left blank, this will
    * default to "master" at runtime.
    */
-  ref?: string 
+  ref?: string
 }
 
 /**
@@ -231,7 +231,11 @@ export class EventsClient {
    * @example
    * new EventsClient("https://brigade.example.com", apiToken, {allowInsecureConnections: true})
    */
-  constructor(apiAddress: string, apiToken: string, opts?: rm.APIClientOptions) {
+  constructor(
+    apiAddress: string,
+    apiToken: string,
+    opts?: rm.APIClientOptions
+  ) {
     this.rmClient = new rm.Client(apiAddress, apiToken, opts)
     this.workersClient = new WorkersClient(apiAddress, apiToken, opts)
     this.logsClient = new LogsClient(apiAddress, apiToken, opts)
@@ -241,7 +245,7 @@ export class EventsClient {
    * Creates one new Event if the Event provided references a Project by ID.
    * Otherwise, the Event provided is treated as a template and zero or more
    * discrete Events may be created-- one for each subscribed Project.
-   * 
+   *
    * @param event A new Event
    * @returns A list of all Events that were created
    * @throws An error if a Project is specified and no such Project exists
@@ -259,22 +263,26 @@ export class EventsClient {
    * If, due to pagination, a list contains only a subset of all selected
    * Events, list metadata will contain values to be passed as options to
    * subsequent calls to retrieve subsequent pages.
-   * 
+   *
    * @param [selector] Optional selection criteria
    * @param [opts] Options used to retrieve a specific page from a paginated
    * list
    * @returns A list of Events
    */
-  public async list(selector?: EventsSelector, opts?: meta.ListOptions): Promise<meta.List<Event>> { // eslint-disable-line @typescript-eslint/no-unused-vars
+  public async list(
+    selector?: EventsSelector,
+    opts?: meta.ListOptions
+  ): Promise<meta.List<Event>> {
+    // eslint-disable-line @typescript-eslint/no-unused-vars
     const req = new rm.Request("GET", "v2/events")
     req.listOpts = opts
     req.queryParams = eventsSelectorToQueryParams(selector || {})
-    return this.rmClient.executeRequest(req) as Promise<meta.List<Event>> 
+    return this.rmClient.executeRequest(req) as Promise<meta.List<Event>>
   }
 
   /**
    * Returns an Event by ID.
-   * 
+   *
    * @param id Identifier of the requested Event
    * @returns The requested Event
    * @throws An error if the requested Event is not found
@@ -288,7 +296,7 @@ export class EventsClient {
    * Clones a pre-existing Event, removing the original's metadata and Worker
    * config in the process.  A new Event is created using the rest of the
    * details preserved from the original.
-   * 
+   *
    * @param id Identifier of the Event to clone
    * @returns A new Event that is a clone of the original
    */
@@ -297,10 +305,10 @@ export class EventsClient {
     req.successCode = 201
     return this.rmClient.executeRequest(req) as Promise<Event>
   }
- 
+
   /**
    * Updates a Worker-specific Event summary.
-   * 
+   *
    * @param id Identifier of the Event to update
    * @throws An error if the specified Event is not found
    */
@@ -317,7 +325,7 @@ export class EventsClient {
    * creates a new Event from this information. Where possible, job results are
    * inherited and not repeated / re-scheduled, for example when a job has
    * succeeded and is stateless (i.e. does not make use of a shared workspace).
-   * 
+   *
    * @param id Identifier of the Event to retry
    * @returns A new Event that is a retry of the original
    */
@@ -329,7 +337,7 @@ export class EventsClient {
 
   /**
    * Cancels a single Event specified by ID.
-   * 
+   *
    * @param id The Event to cancel
    * @throws An error if the specified Event is not found
    */
@@ -340,11 +348,13 @@ export class EventsClient {
 
   /**
    * Cancels multiple Events specified by a selector.
-   * 
+   *
    * @param selector Event selection criteria
    * @returns A summary of the operation's results
    */
-  public async cancelMany(selector: EventsSelector): Promise<CancelManyEventsResult> {
+  public async cancelMany(
+    selector: EventsSelector
+  ): Promise<CancelManyEventsResult> {
     const req = new rm.Request("POST", "v2/events/cancellations")
     req.queryParams = eventsSelectorToQueryParams(selector)
     return this.rmClient.executeRequest(req) as Promise<CancelManyEventsResult>
@@ -352,7 +362,7 @@ export class EventsClient {
 
   /**
    * Deletes a single Event specified by ID.
-   * 
+   *
    * @param id The Event to cancel
    * @throws An error if the specified Event is not found
    */
@@ -363,11 +373,13 @@ export class EventsClient {
 
   /**
    * Deletes multiple Events specified by a selector.
-   * 
+   *
    * @param selector Event selection criteria
    * @returns A summary of the operation's results
    */
-  public async deleteMany(selector: EventsSelector): Promise<DeleteManyEventsResult> {
+  public async deleteMany(
+    selector: EventsSelector
+  ): Promise<DeleteManyEventsResult> {
     const req = new rm.Request("DELETE", "v2/events")
     req.queryParams = eventsSelectorToQueryParams(selector)
     return this.rmClient.executeRequest(req) as Promise<DeleteManyEventsResult>
@@ -375,7 +387,7 @@ export class EventsClient {
 
   /**
    * Returns a specialized client for managing Workers.
-   * 
+   *
    * @returns A specialized client for managing Workers
    */
   public workers(): WorkersClient {
@@ -384,15 +396,17 @@ export class EventsClient {
 
   /**
    * Returns a specialized client for retrieving logs.
-   * 
+   *
    * @returns A specialized client for retrieving logs
    */
   public logs(): LogsClient {
     return this.logsClient
-  }  
+  }
 }
 
-function eventsSelectorToQueryParams(selector: EventsSelector): Map<string, string> {
+function eventsSelectorToQueryParams(
+  selector: EventsSelector
+): Map<string, string> {
   const queryParams = new Map<string, string>()
   if (selector.projectID) {
     queryParams.set("projectID", selector.projectID)

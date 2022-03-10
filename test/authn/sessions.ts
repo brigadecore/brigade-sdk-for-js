@@ -6,10 +6,11 @@ import * as common from "../common"
 import "mocha"
 
 describe("sessions", () => {
-
   describe("SessionsClient", () => {
-
-    const client = new SessionsClient(common.testAPIAddress, common.testAPIToken)
+    const client = new SessionsClient(
+      common.testAPIAddress,
+      common.testAPIToken
+    )
 
     describe("#createRootSession", () => {
       it("should send/receive properly over HTTP", async () => {
@@ -22,7 +23,12 @@ describe("sessions", () => {
           expectedRequestPath: "/v2/sessions",
           expectTokenAuthHeader: false,
           expectedHeaders: new Map<string, string>([
-            ["authorization", `Basic ${Buffer.from(`root:${testRootPassword}`).toString("base64")}`]
+            [
+              "authorization",
+              `Basic ${Buffer.from(`root:${testRootPassword}`).toString(
+                "base64"
+              )}`
+            ]
           ]),
           mockResponseCode: 201,
           mockResponseBody: testSessionToken,
@@ -68,7 +74,5 @@ describe("sessions", () => {
         })
       })
     })
-
   })
-
 })

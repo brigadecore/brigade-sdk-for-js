@@ -1,4 +1,8 @@
-import { uniqueNamesGenerator, adjectives, animals } from "unique-names-generator"
+import {
+  uniqueNamesGenerator,
+  adjectives,
+  animals
+} from "unique-names-generator"
 
 import * as brigade from "../../../dist/index.js"
 
@@ -6,73 +10,82 @@ const apiAddress = ""
 const rootPassword = ""
 const ignoreSSLErrors = true
 
-document.addEventListener('DOMContentLoaded', async () => {
-
+document.addEventListener("DOMContentLoaded", async () => {
   try {
-
     // Get a client without using a token. We'll use this to log in as root and
     // create a service a service account that the remainder of the tests will
     // utilize
-    let client = new brigade.APIClient(
-      apiAddress,
-      "",
-      { allowInsecureConnections: ignoreSSLErrors }
-    )
+    let client = new brigade.APIClient(apiAddress, "", {
+      allowInsecureConnections: ignoreSSLErrors
+    })
 
     document.writeln("Creating a root session...<br/>")
     let token = await client.authn().sessions().createRootSession(rootPassword)
 
     // Refresh the client using the root token
     document.writeln("Refreshing the client using root session's token...<br/>")
-    client = new brigade.APIClient(
-      apiAddress,
-      token.value,
-      { allowInsecureConnections: ignoreSSLErrors }
-    )
+    client = new brigade.APIClient(apiAddress, token.value, {
+      allowInsecureConnections: ignoreSSLErrors
+    })
 
     const serviceAccountID = uniqueNamesGenerator({
       dictionaries: [adjectives, animals],
       length: 2,
-      separator: '-'
+      separator: "-"
     })
 
-    document.writeln(`Creating a new service account ${serviceAccountID}...<br/>`)
-    token = await client.authn().serviceAccounts().create(
-      {
+    document.writeln(
+      `Creating a new service account ${serviceAccountID}...<br/>`
+    )
+    token = await client
+      .authn()
+      .serviceAccounts()
+      .create({
         metadata: {
-          id: serviceAccountID,
+          id: serviceAccountID
         },
         description: "A service account for the brigade-sdk-for-js demo"
-      }
-    )
+      })
 
     // Give the service account permissions to do all sorts of stuff
-    document.writeln(`Granting system role READER to service account ${serviceAccountID}...<br/>`)
-    await client.authz().roleAssignments().grant({
-      principal: {
-        type: brigade.authz.PrincipalTypeServiceAccount,
-        id: serviceAccountID
-      },
-      role: "READER"
-    })
-    document.writeln(`Granting system role PROJECT_CREATOR to service account ${serviceAccountID}...<br/>`)
-    await client.authz().roleAssignments().grant({
-      principal: {
-        type: brigade.authz.PrincipalTypeServiceAccount,
-        id: serviceAccountID
-      },
-      role: "PROJECT_CREATOR"
-    })
+    document.writeln(
+      `Granting system role READER to service account ${serviceAccountID}...<br/>`
+    )
+    await client
+      .authz()
+      .roleAssignments()
+      .grant({
+        principal: {
+          type: brigade.authz.PrincipalTypeServiceAccount,
+          id: serviceAccountID
+        },
+        role: "READER"
+      })
+    document.writeln(
+      `Granting system role PROJECT_CREATOR to service account ${serviceAccountID}...<br/>`
+    )
+    await client
+      .authz()
+      .roleAssignments()
+      .grant({
+        principal: {
+          type: brigade.authz.PrincipalTypeServiceAccount,
+          id: serviceAccountID
+        },
+        role: "PROJECT_CREATOR"
+      })
 
     // Refresh the client using the service account token
-    document.writeln(`Refreshing the client using service account ${serviceAccountID} token...<br/>`)
+    document.writeln(
+      `Refreshing the client using service account ${serviceAccountID} token...<br/>`
+    )
     client = new brigade.APIClient(apiAddress, token.value)
 
     // Now a full battery of tests...
 
     document.writeln("Listing all users...<br/>")
     const users = await client.authn().users().list()
-    users.items?.forEach(user => {
+    users.items?.forEach((user) => {
       document.writeln(user.metadata.id + "<br/>")
     })
 
@@ -85,21 +98,24 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     document.writeln("Listing all service accounts...<br/>")
     const serviceAccounts = await client.authn().serviceAccounts().list()
-    serviceAccounts.items?.forEach(serviceAccount => {
+    serviceAccounts.items?.forEach((serviceAccount) => {
       document.writeln(serviceAccount.metadata.id + "<br/>")
     })
 
     if (serviceAccounts.items?.length > 0) {
       const serviceAccountID = serviceAccounts.items[0].metadata.id
       document.writeln(`Getting service account ${serviceAccountID}...<br/>`)
-      const serviceAccount = await client.authn().serviceAccounts().get(serviceAccountID)
+      const serviceAccount = await client
+        .authn()
+        .serviceAccounts()
+        .get(serviceAccountID)
       document.writeln(JSON.stringify(serviceAccount) + "<br/>")
     }
 
     document.writeln("Listing all projects...<br/>")
     const projects = await client.core().projects().list()
-    projects.items?.forEach(project => {
-      document.writeln(project.metadata.id + "<br/>")  
+    projects.items?.forEach((project) => {
+      document.writeln(project.metadata.id + "<br/>")
     })
 
     if (projects.items?.length > 0) {
@@ -111,7 +127,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     document.writeln("Listing all events...<br/>")
     let events = await client.core().events().list()
-    events.items?.forEach(event => {
+    events.items?.forEach((event) => {
       document.writeln(event.metadata?.id + "<br/>")
     })
 
@@ -127,39 +143,40 @@ document.addEventListener('DOMContentLoaded', async () => {
       projectID = uniqueNamesGenerator({
         dictionaries: [adjectives, animals],
         length: 2,
-        separator: '-',
+        separator: "-"
       })
     } while (projectID.length > 18)
 
     document.writeln(`Creating new project ${projectID}...<br/>`)
-    await client.core().projects().create(
-      {
+    await client
+      .core()
+      .projects()
+      .create({
         metadata: {
-          id: projectID,
+          id: projectID
         },
         spec: {
-          eventSubscriptions: [{
-            source: "foobar",
-            types: ["batbaz"],
-            labels: {},
-          }],
+          eventSubscriptions: [
+            {
+              source: "foobar",
+              types: ["batbaz"],
+              labels: {}
+            }
+          ],
           workerTemplate: {
             defaultConfigFiles: {
               "brigade.js": `console.log("Hello, World!")`
             }
           }
         }
-      }
-    )
+      })
 
     document.writeln(`Creating event for project ${projectID}...<br/>`)
-    events = await client.core().events().create(
-      {
-        projectID: projectID,
-        source: "foobar",
-        type: "batbaz" 
-      }
-    )
+    events = await client.core().events().create({
+      projectID: projectID,
+      source: "foobar",
+      type: "batbaz"
+    })
     const eventID = events.items[0].metadata?.id || ""
 
     document.writeln(`Streaming event ${eventID} worker status...<br/>`)
@@ -199,11 +216,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       })
       logStream.onDone(() => {
         resolve()
-      })  
+      })
     })
-
-  } catch(e) {
+  } catch (e) {
     document.writeln(e + "<br/>")
   }
-
 })
