@@ -108,6 +108,12 @@ export interface JobSpec {
    * operating system (i.e. Windows) or specific hardware (e.g. a GPU.)
    */
   host?: JobHost
+  /** Specifies whether the job is permitted to fail WITHOUT causing the
+   * worker process to fail. The API server does not use this field directly,
+   * but it is information that may be valuable to gateways that report job
+   * success/failure upstream to original event sources.
+   */
+  fallible?: boolean
 }
 
 /**
