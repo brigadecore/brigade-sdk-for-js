@@ -111,7 +111,7 @@ We have a slack channel!
 [Kubernetes/#brigade](https://kubernetes.slack.com/messages/C87MF1RFD) Feel free
 to join for any support questions or feedback, we are happy to help. To report
 an issue or to request a feature open an issue
-[here](https://github.com/brigadecore/brigade/issues)
+[here](https://github.com/brigadecore/brigade/brigade-sdk-for-js/issues)
 
 ## Code of Conduct
 
