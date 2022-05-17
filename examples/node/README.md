@@ -21,7 +21,7 @@ Running this example requires:
 
 Define environment variables to hold the API server address and root password:
 
-```console
+```shell
 $ export API_SERVER_ADDRESS=<Brigade 2 API server address>
 $ export ROOT_PASSWORD=<Brigade 2 API server root password>
 ```
@@ -29,6 +29,6 @@ $ export ROOT_PASSWORD=<Brigade 2 API server root password>
 To obtain all required dependencies, transpile the example TypeScript, and run
 the example in Node, all in one shot, navigate to this directory, then type:
 
-```console
+```shell
 $ yarn demo
 ```

@@ -18,13 +18,13 @@ Install into your project using your favorite package manager.
 
 For instance:
 
-```console
+```shell
 $ npm install --save @brigadecore/brigade-sdk
 ```
 
 Or:
 
-```console
+```shell
 $ yarn add @brigadecore/brigade-sdk
 ```
 
