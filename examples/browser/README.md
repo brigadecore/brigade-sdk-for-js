@@ -32,6 +32,6 @@ To obtain all required dependencies, transpile the example TypeScript, and run
 the example in your system's default browser, all in one shot, navigate to this
 directory, then:
 
-```console
+```shell
 $ yarn demo
 ```
